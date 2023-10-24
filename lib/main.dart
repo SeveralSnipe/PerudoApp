@@ -14,7 +14,7 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   runApp(const MaterialApp(
-    title: 'Perudo',
+    title: 'PERUDO',
     home: MyApp(),
   ));
 }

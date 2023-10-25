@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/material.dart';
 
 class DatabaseProvider extends ChangeNotifier {
   late DatabaseReference databaseReference;
@@ -7,6 +8,7 @@ class DatabaseProvider extends ChangeNotifier {
   final String player1;
   late final Map<int, String> data = {1: player1};
   int count = 1;
+  bool started = false;
 
   DatabaseProvider(this.code, this.player1){
     // Initialize your database reference
@@ -17,6 +19,11 @@ class DatabaseProvider extends ChangeNotifier {
       // Parse and update the data as needed
       if (event.snapshot.value != null) {
         Map<dynamic,dynamic> temp = event.snapshot.value as Map;
+        if (temp['status']=='started'){
+          started = true;
+          notifyListeners();
+          return;
+        }
         int counter = 2;
         for (var player in temp['players'].keys) {
           if (player==player1) continue;
@@ -31,5 +38,14 @@ class DatabaseProvider extends ChangeNotifier {
       // Notify listeners to trigger a rebuild
       notifyListeners();
     });
+  }
+
+  void startGame() async{
+    databaseReference = FirebaseDatabase(databaseURL: "https://perudo-flutter-default-rtdb.asia-southeast1.firebasedatabase.app/").ref('Rooms/$code');
+    final Map<String, dynamic> updates = {};
+    updates['/status'] = 'started';
+    await databaseReference.update(updates);
+    started = true;
+    notifyListeners();
   }
 }

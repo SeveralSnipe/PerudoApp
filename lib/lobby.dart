@@ -21,24 +21,25 @@ class Lobby extends StatefulWidget {
 }
 
 class _LobbyState extends State<Lobby> {
-
   @override
-  void dispose() async{
+  void dispose() async {
     var room = widget.lobbyCode;
-    DatabaseReference databaseReference = FirebaseDatabase(databaseURL: "https://perudo-flutter-default-rtdb.asia-southeast1.firebasedatabase.app/").ref('Rooms/$room');
-    var roomRef=await databaseReference.get();
-    if (roomRef.value!=null){
-      if (widget.leadername!=widget.playername){
+    DatabaseReference databaseReference = FirebaseDatabase(
+            databaseURL:
+                "https://perudo-flutter-default-rtdb.asia-southeast1.firebasedatabase.app/")
+        .ref('Rooms/$room');
+    var roomRef = await databaseReference.get();
+    if (roomRef.value != null) {
+      if (widget.leadername != widget.playername) {
         Map<dynamic, dynamic> values = roomRef.value as Map<dynamic, dynamic>;
         final Map<String, dynamic> updates = {};
-        updates['/count'] = values['count']-1;
+        updates['/count'] = values['count'] - 1;
         await databaseReference.update(updates);
         await databaseReference.child('/players/${widget.playername}').remove();
-      }
-      else{
+      } else {
         databaseReference.remove();
       }
-    super.dispose();
+      super.dispose();
     }
   }
 
@@ -48,68 +49,76 @@ class _LobbyState extends State<Lobby> {
         create: (context) =>
             DatabaseProvider(widget.lobbyCode, widget.leadername),
         child: Scaffold(body: Consumer<DatabaseProvider>(
-          builder: (context, myDatabaseProvider, child) {
-            return Container(
-                alignment: Alignment.center,
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Colors.orange, Colors.yellow],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text('Players',
-                        style: GoogleFonts.aleo(
-                          color: Colors.black87,
-                          fontSize: 20,
-                        )),
-                    const Padding(padding: EdgeInsets.all(20)),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: myDatabaseProvider.count,
-                      itemBuilder: (context, index) {
-                        final key =
-                            myDatabaseProvider.data.keys.elementAt(index);
-                        final value = myDatabaseProvider.data[key];
-                        return Center(
-                            child: Text(
-                          key == 1 ? '♚ $value' : '$value',
-                          style: TextStyle(
-                              fontWeight: value == widget.playername
-                                  ? FontWeight.bold
-                                  : FontWeight.normal,
-                              fontSize: 16),
-                        ));
-                      },
+            builder: (context, myDatabaseProvider, child) {
+          return myDatabaseProvider.started
+              ? const Placeholder()
+              : Container(
+                  alignment: Alignment.center,
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Colors.orange, Colors.yellow],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
                     ),
-                    widget.leadername == widget.playername
-                        ? ElevatedButton(
-                            onPressed: myDatabaseProvider.count>1 ? () {} : null,
-                            style: ButtonStyle(
-                              backgroundColor: myDatabaseProvider.count>1 ?
-                                  MaterialStatePropertyAll(Colors.red.shade300) : const MaterialStatePropertyAll(Colors.grey),
-                            ),
-                            child: Text(
-                              "Start Game",
-                              style: GoogleFonts.aleo(
-                                color: Colors.black87,
-                                fontSize: 16,
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('Players',
+                          style: GoogleFonts.aleo(
+                            color: Colors.black87,
+                            fontSize: 20,
+                          )),
+                      const Padding(padding: EdgeInsets.all(20)),
+                      ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: myDatabaseProvider.count,
+                        itemBuilder: (context, index) {
+                          final key =
+                              myDatabaseProvider.data.keys.elementAt(index);
+                          final value = myDatabaseProvider.data[key];
+                          return Center(
+                              child: Text(
+                            key == 1 ? '♚ $value' : '$value',
+                            style: TextStyle(
+                                fontWeight: value == widget.playername
+                                    ? FontWeight.bold
+                                    : FontWeight.normal,
+                                fontSize: 16),
+                          ));
+                        },
+                      ),
+                      widget.leadername == widget.playername
+                          ? ElevatedButton(
+                              onPressed: myDatabaseProvider.count > 1
+                                  ? () {
+                                      myDatabaseProvider.startGame();
+                                    }
+                                  : null,
+                              style: ButtonStyle(
+                                backgroundColor: myDatabaseProvider.count > 1
+                                    ? MaterialStatePropertyAll(
+                                        Colors.red.shade300)
+                                    : const MaterialStatePropertyAll(
+                                        Colors.grey),
                               ),
-                            ),
-                          )
-                        : const Padding(padding: EdgeInsets.all(0)),
-                    const Padding(padding: EdgeInsets.all(20)),
-                    Text('Code: ${widget.lobbyCode}',
-                        style: GoogleFonts.aleo(
-                          color: Colors.black87,
-                          fontSize: 16,
-                        )),
-                  ],
-                ));
-          },
-        )));
+                              child: Text(
+                                "Start Game",
+                                style: GoogleFonts.aleo(
+                                  color: Colors.black87,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            )
+                          : const Padding(padding: EdgeInsets.all(0)),
+                      const Padding(padding: EdgeInsets.all(20)),
+                      Text('Code: ${widget.lobbyCode}',
+                          style: GoogleFonts.aleo(
+                            color: Colors.black87,
+                            fontSize: 16,
+                          )),
+                    ],
+                  ));
+        })));
   }
 }

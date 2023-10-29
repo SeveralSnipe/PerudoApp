@@ -2,15 +2,16 @@ import 'package:flutter/foundation.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
-class DatabaseProvider extends ChangeNotifier {
+class LobbyProvider extends ChangeNotifier {
   late DatabaseReference databaseReference;
   final String code;
   final String player1;
   late final Map<int, String> data = {1: player1};
+  late Map<dynamic, dynamic> gameData;
   int count = 1;
   bool started = false;
 
-  DatabaseProvider(this.code, this.player1){
+  LobbyProvider(this.code, this.player1){
     // Initialize your database reference
     databaseReference = FirebaseDatabase(databaseURL: "https://perudo-flutter-default-rtdb.asia-southeast1.firebasedatabase.app/").ref('Rooms/$code');
 
@@ -21,6 +22,7 @@ class DatabaseProvider extends ChangeNotifier {
         Map<dynamic,dynamic> temp = event.snapshot.value as Map;
         if (temp['status']=='started'){
           started = true;
+          gameData = temp;
           notifyListeners();
           return;
         }
@@ -55,6 +57,28 @@ class DatabaseProvider extends ChangeNotifier {
     updates['/status'] = 'started'; 
     await databaseReference.update(updates);
     started = true;
+    var gameRef = await databaseReference.get();
+    gameData = gameRef.value as Map<dynamic, dynamic>;
     notifyListeners();
+  }
+}
+
+class GameProvider extends ChangeNotifier {
+  late DatabaseReference databaseReference;
+  final String code;
+  late Map<dynamic, dynamic> data;
+
+  GameProvider(this.code, this.data){
+    // Initialize your database reference
+    databaseReference = FirebaseDatabase(databaseURL: "https://perudo-flutter-default-rtdb.asia-southeast1.firebasedatabase.app/").ref('Rooms/$code');
+    // Listen to changes in the database and update the data list
+    databaseReference.onValue.listen((event) {
+      // Parse and update the data as needed
+      if (event.snapshot.value != null) {
+        data = event.snapshot.value as Map;
+      }
+      // Notify listeners to trigger a rebuild
+      notifyListeners();
+    });
   }
 }

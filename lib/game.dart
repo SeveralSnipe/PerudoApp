@@ -19,11 +19,13 @@ class Game extends StatefulWidget {
   final String lobbyCode;
   final String leadername;
   final String playername;
+  final Map<dynamic,dynamic> initData;
   const Game(
       {super.key,
       required this.lobbyCode,
       required this.leadername,
-      required this.playername});
+      required this.playername,
+      required this.initData});
 
   @override
   State<Game> createState() => _GameState();
@@ -32,51 +34,64 @@ class Game extends StatefulWidget {
 class _GameState extends State<Game> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: Container(
-            alignment: Alignment.center,
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.orange, Colors.yellow],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+    return ChangeNotifierProvider(
+        create: (context) => GameProvider(widget.lobbyCode, widget.initData),
+        child: Scaffold(body: Consumer<GameProvider>(
+            builder: (context, myDatabaseProvider, child) {
+          return Container(
+              alignment: Alignment.center,
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.orange, Colors.yellow],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
               ),
-            ),
-            child: Center(
-              child: Column(
-                children: [
-                  FutureBuilder(
-                      future: player(widget.lobbyCode),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          return ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              shrinkWrap: true,
-                              itemCount: snapshot.data!['count'],
-                              itemBuilder: (context, index) {
-                                
-                              });
-                        } else {
-                          return const CircularProgressIndicator();
-                        }
-                      }),
-                  ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    shrinkWrap: true,
-                    itemCount: 6,
-                    itemBuilder: (context, index) {
-                      String imgPath = dices[index]!;
-                      return Center(
-                        child: Image.asset(
-                          imgPath,
-                          scale: 8,
-                          color: Colors.red,
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              ),
-            )));
+              child: Center(
+                child: Column(
+                  children: [
+                    Container(
+                      height: 200,
+                      alignment: Alignment.topCenter,
+                      child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          shrinkWrap: true,
+                          itemCount: myDatabaseProvider.data['count'],
+                          itemBuilder: (context, index) {
+                            for (var player
+                                in myDatabaseProvider.data['players'].keys) {
+                              return Center(
+                                  child: Text(
+                                '$player',
+                                style: TextStyle(
+                                    // fontWeight: value == widget.playername
+                                    //     ? FontWeight.bold
+                                    //     : FontWeight.normal,
+                                    fontSize: player == widget.playername
+                                        ? 20
+                                        : 16),
+                              ));
+                            }
+                          }),
+                    ),
+                    ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      shrinkWrap: true,
+                      itemCount: 6,
+                      itemBuilder: (context, index) {
+                        String imgPath = dices[index]!;
+                        return Center(
+                          child: Image.asset(
+                            imgPath,
+                            scale: 8,
+                            color: Colors.red,
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ));
+        })));
   }
 }

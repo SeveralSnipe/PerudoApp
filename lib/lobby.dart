@@ -49,11 +49,11 @@ class _LobbyState extends State<Lobby> {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
         create: (context) =>
-            DatabaseProvider(widget.lobbyCode, widget.leadername),
-        child: Scaffold(body: Consumer<DatabaseProvider>(
+            LobbyProvider(widget.lobbyCode, widget.leadername),
+        child: Scaffold(body: Consumer<LobbyProvider>(
             builder: (context, myDatabaseProvider, child) {
           return myDatabaseProvider.started
-              ? Game(lobbyCode: widget.lobbyCode, playername: widget.playername, leadername: widget.playername,)
+              ? Game(lobbyCode: widget.lobbyCode, playername: widget.playername, leadername: widget.playername, initData: myDatabaseProvider.gameData)
               : Container(
                   alignment: Alignment.center,
                   decoration: const BoxDecoration(

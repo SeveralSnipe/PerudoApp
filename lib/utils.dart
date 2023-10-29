@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
 
@@ -58,4 +59,14 @@ int findPlayerNumber(String playername, Map<dynamic,dynamic> values){
   }
 
   return playernumber;
+}
+
+Future<Map> player(String code) async{
+  DatabaseReference databaseReference = FirebaseDatabase(databaseURL: "https://perudo-flutter-default-rtdb.asia-southeast1.firebasedatabase.app/").ref('Rooms/$code');
+  var roomRef = await databaseReference.get();
+  if (roomRef.value != null) {
+    Map<dynamic, dynamic> values = roomRef.value as Map<dynamic, dynamic>;
+    return values;
+  }
+  return {'ERROR':'ERROR'};
 }

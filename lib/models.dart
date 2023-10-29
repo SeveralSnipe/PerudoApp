@@ -42,8 +42,17 @@ class DatabaseProvider extends ChangeNotifier {
 
   void startGame() async{
     databaseReference = FirebaseDatabase(databaseURL: "https://perudo-flutter-default-rtdb.asia-southeast1.firebasedatabase.app/").ref('Rooms/$code');
+    var playersRef = await databaseReference.child('/players').get();
     final Map<String, dynamic> updates = {};
-    updates['/status'] = 'started';
+    if(playersRef.value !=null){
+      Map<dynamic, dynamic> values = playersRef.value as Map<dynamic, dynamic>;
+      int playerNum=1;
+      for (var player in values.keys) {
+        updates['/players/$player/order']=playerNum;
+        playerNum++;
+      }
+    }
+    updates['/status'] = 'started'; 
     await databaseReference.update(updates);
     started = true;
     notifyListeners();

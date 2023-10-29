@@ -1,6 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:perudo/game.dart';
 import 'package:perudo/models.dart';
 import 'package:provider/provider.dart';
 
@@ -21,6 +22,7 @@ class Lobby extends StatefulWidget {
 }
 
 class _LobbyState extends State<Lobby> {
+  
   @override
   void dispose() async {
     var room = widget.lobbyCode;
@@ -51,7 +53,7 @@ class _LobbyState extends State<Lobby> {
         child: Scaffold(body: Consumer<DatabaseProvider>(
             builder: (context, myDatabaseProvider, child) {
           return myDatabaseProvider.started
-              ? const Placeholder()
+              ? Game(lobbyCode: widget.lobbyCode, playername: widget.playername, leadername: widget.playername,)
               : Container(
                   alignment: Alignment.center,
                   decoration: const BoxDecoration(

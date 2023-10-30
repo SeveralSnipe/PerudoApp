@@ -67,17 +67,21 @@ class GameProvider extends ChangeNotifier {
   late DatabaseReference databaseReference;
   final String code;
   late Map<dynamic, dynamic> data;
+  // late Map<int, String> playerOrder;
 
   GameProvider(this.code, this.data){
-    // Initialize your database reference
     databaseReference = FirebaseDatabase(databaseURL: "https://perudo-flutter-default-rtdb.asia-southeast1.firebasedatabase.app/").ref('Rooms/$code');
-    // Listen to changes in the database and update the data list
+    // for (var i = 0; i < data['count']; i++) {
+    //   for (var player in data['players'].keys) {
+    //     if (data['players'][player]['order']==i+1){
+    //       playerOrder[i]=player;
+    //     }
+    //   }
+    // } 
     databaseReference.onValue.listen((event) {
-      // Parse and update the data as needed
       if (event.snapshot.value != null) {
         data = event.snapshot.value as Map;
       }
-      // Notify listeners to trigger a rebuild
       notifyListeners();
     });
   }

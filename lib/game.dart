@@ -19,7 +19,7 @@ class Game extends StatefulWidget {
   final String lobbyCode;
   final String leadername;
   final String playername;
-  final Map<dynamic,dynamic> initData;
+  final Map<dynamic, dynamic> initData;
   const Game(
       {super.key,
       required this.lobbyCode,
@@ -39,59 +39,61 @@ class _GameState extends State<Game> {
         child: Scaffold(body: Consumer<GameProvider>(
             builder: (context, myDatabaseProvider, child) {
           return Container(
-              alignment: Alignment.center,
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Colors.orange, Colors.yellow],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
+            alignment: Alignment.center,
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.orange, Colors.yellow],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
               ),
-              child: Center(
-                child: Column(
-                  children: [
-                    Container(
-                      height: 200,
-                      alignment: Alignment.topCenter,
-                      child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          shrinkWrap: true,
-                          itemCount: myDatabaseProvider.data['count'],
-                          itemBuilder: (context, index) {
-                            for (var player
-                                in myDatabaseProvider.data['players'].keys) {
-                              return Center(
-                                  child: Text(
-                                '$player',
-                                style: TextStyle(
-                                    // fontWeight: value == widget.playername
-                                    //     ? FontWeight.bold
-                                    //     : FontWeight.normal,
-                                    fontSize: player == widget.playername
-                                        ? 20
-                                        : 16),
-                              ));
-                            }
-                          }),
-                    ),
-                    ListView.builder(
+            ),
+            child: Column(
+              children: [
+                Container(
+                  height: 200,
+                  alignment: Alignment.topCenter,
+                  child: ListView.separated(
                       scrollDirection: Axis.horizontal,
                       shrinkWrap: true,
-                      itemCount: 6,
+                      itemCount: myDatabaseProvider.data['count'],
                       itemBuilder: (context, index) {
-                        String imgPath = dices[index]!;
-                        return Center(
-                          child: Image.asset(
-                            imgPath,
-                            scale: 8,
-                            color: Colors.red,
-                          ),
-                        );
+                        for (var player
+                            in myDatabaseProvider.data['players'].keys) {
+                          if (myDatabaseProvider.data['players'][player]
+                                  ['order'] ==
+                              index + 1) {
+                            return Center(
+                                child: Text(
+                              '$player',
+                              style: TextStyle(
+                                color: player == widget.playername ? Colors.blue : Colors.black,
+                                  fontSize: 16),
+                            ));
+                          }
+                        }
                       },
-                    ),
-                  ],
+                      separatorBuilder: (context, index) {
+                        return const SizedBox(width: 7, height: 1,);
+                      },),
                 ),
-              ));
+                // ListView.builder(
+                //   scrollDirection: Axis.horizontal,
+                //   shrinkWrap: true,
+                //   itemCount: 6,
+                //   itemBuilder: (context, index) {
+                //     String imgPath = dices[index]!;
+                //     return Center(
+                //       child: Image.asset(
+                //         imgPath,
+                //         scale: 8,
+                //         color: Colors.red,
+                //       ),
+                //     );
+                //   },
+                // ),
+              ],
+            ),
+          );
         })));
   }
 }

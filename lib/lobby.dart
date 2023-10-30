@@ -22,7 +22,6 @@ class Lobby extends StatefulWidget {
 }
 
 class _LobbyState extends State<Lobby> {
-  
   @override
   void dispose() async {
     var room = widget.lobbyCode;
@@ -48,12 +47,15 @@ class _LobbyState extends State<Lobby> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-        create: (context) =>
-            LobbyProvider(widget.lobbyCode, widget.leadername),
+        create: (context) => LobbyProvider(widget.lobbyCode, widget.leadername),
         child: Scaffold(body: Consumer<LobbyProvider>(
             builder: (context, myDatabaseProvider, child) {
           return myDatabaseProvider.started
-              ? Game(lobbyCode: widget.lobbyCode, playername: widget.playername, leadername: widget.playername, initData: myDatabaseProvider.gameData)
+              ? Game(
+                  lobbyCode: widget.lobbyCode,
+                  playername: widget.playername,
+                  leadername: widget.playername,
+                  initData: myDatabaseProvider.gameData)
               : Container(
                   alignment: Alignment.center,
                   decoration: const BoxDecoration(

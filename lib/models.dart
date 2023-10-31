@@ -56,6 +56,8 @@ class LobbyProvider extends ChangeNotifier {
     }
     updates['/status'] = 'started'; 
     await databaseReference.update(updates);
+    await databaseReference.child('/player_turn').set(1);
+    await databaseReference.child('/flag').set(true);
     started = true;
     var gameRef = await databaseReference.get();
     gameData = gameRef.value as Map<dynamic, dynamic>;
@@ -84,5 +86,16 @@ class GameProvider extends ChangeNotifier {
       }
       notifyListeners();
     });
+  }
+
+  Future<void> leaderTimerExpire() async{
+    final Map<String, dynamic> updates = {};
+    updates['/flag']=!data['flag'];
+    await databaseReference.update(updates);
+    notifyListeners();
+  }
+
+  void dummy(){
+    return;
   }
 }

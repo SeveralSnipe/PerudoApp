@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:perudo/models.dart';
 import 'package:provider/provider.dart';
+import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 
 import 'utils.dart';
 
@@ -53,28 +54,34 @@ class _GameState extends State<Game> {
                   height: 200,
                   alignment: Alignment.topCenter,
                   child: ListView.separated(
-                      scrollDirection: Axis.horizontal,
-                      shrinkWrap: true,
-                      itemCount: myDatabaseProvider.data['count'],
-                      itemBuilder: (context, index) {
-                        for (var player
-                            in myDatabaseProvider.data['players'].keys) {
-                          if (myDatabaseProvider.data['players'][player]
-                                  ['order'] ==
-                              index + 1) {
-                            return Center(
-                                child: Text(
-                              '$player',
-                              style: TextStyle(
-                                color: player == widget.playername ? Colors.blue : Colors.black,
-                                  fontSize: 16),
-                            ));
-                          }
+                    scrollDirection: Axis.horizontal,
+                    shrinkWrap: true,
+                    itemCount: myDatabaseProvider.data['count'],
+                    itemBuilder: (context, index) {
+                      for (var player
+                          in myDatabaseProvider.data['players'].keys) {
+                        if (myDatabaseProvider.data['players'][player]
+                                ['order'] ==
+                            index + 1) {
+                          return Center(
+                              child: Text(
+                            '$player',
+                            style: TextStyle(
+                                color: player == widget.playername
+                                    ? Colors.blue
+                                    : Colors.black,
+                                fontSize: 16),
+                          ));
                         }
-                      },
-                      separatorBuilder: (context, index) {
-                        return const SizedBox(width: 7, height: 1,);
-                      },),
+                      }
+                    },
+                    separatorBuilder: (context, index) {
+                      return const SizedBox(
+                        width: 7,
+                        height: 1,
+                      );
+                    },
+                  ),
                 ),
                 // ListView.builder(
                 //   scrollDirection: Axis.horizontal,
@@ -91,6 +98,20 @@ class _GameState extends State<Game> {
                 //     );
                 //   },
                 // ),
+                CircularCountDownTimer(
+                  width: 100,
+                  height: 200,
+                  duration: 60,
+                  fillColor: Colors.green.shade400,
+                  ringColor: Colors.green.shade200,
+                  isReverse: true,
+                  isReverseAnimation: true,
+                  backgroundColor: Colors.green.shade400,
+                  textStyle: const TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.bold),
+                  strokeWidth: 7,
+                  onComplete: widget.playername == widget.leadername ? myDatabaseProvider.leaderTimerExpire : myDatabaseProvider.dummy,
+                )
               ],
             ),
           );

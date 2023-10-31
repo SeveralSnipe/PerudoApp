@@ -39,6 +39,7 @@ dependencies:
   firebase_core: ^2.11.0
   firebase_database: ^10.1.2
   provider: 
+  circular_countdown_timer: 
 
 dev_dependencies:
   flutter_test:

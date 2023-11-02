@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 
 class LobbyProvider extends ChangeNotifier {
   late DatabaseReference databaseReference;
@@ -69,6 +70,10 @@ class GameProvider extends ChangeNotifier {
   late DatabaseReference databaseReference;
   final String code;
   late Map<dynamic, dynamic> data;
+  CountDownController timercontroller = CountDownController();
+  CountDownController breakcontroller = CountDownController();
+  bool timerFlag = true; // true for 1 min false for 5 second
+  String message = '1 Min timer';
   // late Map<int, String> playerOrder;
 
   GameProvider(this.code, this.data){
@@ -83,7 +88,16 @@ class GameProvider extends ChangeNotifier {
     databaseReference.onValue.listen((event) {
       if (event.snapshot.value != null) {
         data = event.snapshot.value as Map;
+        if(data['flag']){
+          message = '1 Min timer';
+          timercontroller.restart(duration: 60);
+        }
+        else{
+          message = '5 second break';
+          timercontroller.restart(duration: 5);
+        }
       }
+      
       notifyListeners();
     });
   }
@@ -92,6 +106,14 @@ class GameProvider extends ChangeNotifier {
     final Map<String, dynamic> updates = {};
     updates['/flag']=!data['flag'];
     await databaseReference.update(updates);
+    if(data['flag']){
+      message = '5 second break';
+      timercontroller.restart(duration: 5);
+    }
+    else{
+      message = '1 Min timer';
+      timercontroller.restart(duration: 60);
+    }
     notifyListeners();
   }
 

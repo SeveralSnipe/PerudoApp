@@ -38,7 +38,7 @@ class _GameState extends State<Game> {
     return ChangeNotifierProvider(
         create: (context) => GameProvider(widget.lobbyCode, widget.initData),
         child: Scaffold(body: Consumer<GameProvider>(
-            builder: (context, myDatabaseProvider, child) {
+            builder: (context, gameProvider, child) {
           return Container(
             alignment: Alignment.center,
             decoration: const BoxDecoration(
@@ -56,11 +56,11 @@ class _GameState extends State<Game> {
                   child: ListView.separated(
                     scrollDirection: Axis.horizontal,
                     shrinkWrap: true,
-                    itemCount: myDatabaseProvider.data['count'],
+                    itemCount: gameProvider.data['count'],
                     itemBuilder: (context, index) {
                       for (var player
-                          in myDatabaseProvider.data['players'].keys) {
-                        if (myDatabaseProvider.data['players'][player]
+                          in gameProvider.data['players'].keys) {
+                        if (gameProvider.data['players'][player]
                                 ['order'] ==
                             index + 1) {
                           return Center(
@@ -83,6 +83,7 @@ class _GameState extends State<Game> {
                     },
                   ),
                 ),
+                Text(gameProvider.message),
                 // ListView.builder(
                 //   scrollDirection: Axis.horizontal,
                 //   shrinkWrap: true,
@@ -102,6 +103,7 @@ class _GameState extends State<Game> {
                   width: 100,
                   height: 200,
                   duration: 60,
+                  controller: gameProvider.timercontroller,
                   fillColor: Colors.green.shade400,
                   ringColor: Colors.green.shade200,
                   isReverse: true,
@@ -110,7 +112,7 @@ class _GameState extends State<Game> {
                   textStyle: const TextStyle(
                       fontSize: 20, fontWeight: FontWeight.bold),
                   strokeWidth: 7,
-                  onComplete: widget.playername == widget.leadername ? myDatabaseProvider.leaderTimerExpire : myDatabaseProvider.dummy,
+                  onComplete: widget.playername == widget.leadername ? gameProvider.leaderTimerExpire : gameProvider.dummy,
                 )
               ],
             ),

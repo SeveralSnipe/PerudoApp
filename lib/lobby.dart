@@ -31,13 +31,13 @@ class _LobbyState extends State<Lobby> {
         .ref('Rooms/$room');
     var roomRef = await databaseReference.get();
     if (roomRef.value != null) {
-      if (widget.leadername != widget.playername) {
-        Map<dynamic, dynamic> values = roomRef.value as Map<dynamic, dynamic>;
+      Map<dynamic, dynamic> values = roomRef.value as Map<dynamic, dynamic>;
+      if (widget.leadername != widget.playername && values['status']=="filling") {
         final Map<String, dynamic> updates = {};
         updates['/count'] = values['count'] - 1;
         await databaseReference.update(updates);
         await databaseReference.child('/players/${widget.playername}').remove();
-      } else {
+      } else if(values['status']=="filling"){
         databaseReference.remove();
       }
       super.dispose();

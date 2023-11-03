@@ -106,14 +106,13 @@ class GameProvider extends ChangeNotifier {
     final Map<String, dynamic> updates = {};
     updates['/flag']=!data['flag'];
     await databaseReference.update(updates);
-    if(data['flag']){
-      message = '5 second break';
-      timercontroller.restart(duration: 5);
-    }
-    else{
-      message = '1 Min timer';
-      timercontroller.restart(duration: 60);
-    }
+    notifyListeners();
+  }
+
+  Future<void> callDudo() async{
+    final Map<String, dynamic> updates = {};
+    updates['/flag']=!data['flag'];
+    await databaseReference.update(updates);
     notifyListeners();
   }
 

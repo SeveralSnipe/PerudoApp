@@ -35,10 +35,12 @@ class Game extends StatefulWidget {
 class _GameState extends State<Game> {
   @override
   Widget build(BuildContext context) {
+    final height = MediaQuery.of(context).size.height;
+    final width = MediaQuery.of(context).size.width;
     return ChangeNotifierProvider(
         create: (context) => GameProvider(widget.lobbyCode, widget.initData),
-        child: Scaffold(body: Consumer<GameProvider>(
-            builder: (context, gameProvider, child) {
+        child: Scaffold(body:
+            Consumer<GameProvider>(builder: (context, gameProvider, child) {
           return Container(
             alignment: Alignment.center,
             decoration: const BoxDecoration(
@@ -51,22 +53,20 @@ class _GameState extends State<Game> {
             child: Column(
               children: [
                 Container(
-                  height: 200,
+                  height: 0.15*height,
                   alignment: Alignment.topCenter,
                   child: ListView.separated(
                     scrollDirection: Axis.horizontal,
                     shrinkWrap: true,
                     itemCount: gameProvider.data['count'],
                     itemBuilder: (context, index) {
-                      for (var player
-                          in gameProvider.data['players'].keys) {
-                        if (gameProvider.data['players'][player]
-                                ['order'] ==
+                      for (var player in gameProvider.data['players'].keys) {
+                        if (gameProvider.data['players'][player]['order'] ==
                             index + 1) {
                           return Center(
                               child: Text(
                             '$player',
-                            style: TextStyle(
+                            style: GoogleFonts.aleo(
                                 color: player == widget.playername
                                     ? Colors.blue
                                     : Colors.black,
@@ -83,7 +83,15 @@ class _GameState extends State<Game> {
                     },
                   ),
                 ),
-                Text(gameProvider.message),
+                Padding(padding: EdgeInsets.symmetric(horizontal: double.infinity, vertical: 0.1*height)),
+                Text(
+                    gameProvider.message,
+                    style: GoogleFonts.aleo(
+                      color: Colors.black87,
+                      fontSize: 16,
+                    ),
+                  ),
+                Padding(padding: EdgeInsets.symmetric(horizontal: double.infinity, vertical: 0.1*height)),
                 // ListView.builder(
                 //   scrollDirection: Axis.horizontal,
                 //   shrinkWrap: true,
@@ -100,8 +108,8 @@ class _GameState extends State<Game> {
                 //   },
                 // ),
                 CircularCountDownTimer(
-                  width: 100,
-                  height: 200,
+                  width: 0.25*width,
+                  height: 0.15*height,
                   duration: 60,
                   controller: gameProvider.timercontroller,
                   fillColor: Colors.green.shade400,
@@ -109,11 +117,29 @@ class _GameState extends State<Game> {
                   isReverse: true,
                   isReverseAnimation: true,
                   backgroundColor: Colors.green.shade400,
-                  textStyle: const TextStyle(
-                      fontSize: 20, fontWeight: FontWeight.bold),
+                  textStyle:
+                      GoogleFonts.aleo(color: Colors.black87, fontSize: 16),
                   strokeWidth: 7,
-                  onComplete: widget.playername == widget.leadername ? gameProvider.leaderTimerExpire : gameProvider.dummy,
-                )
+                  onComplete: widget.playername == widget.leadername
+                      ? gameProvider.leaderTimerExpire
+                      : gameProvider.dummy,
+                ),
+                Padding(padding: EdgeInsets.symmetric(horizontal: double.infinity, vertical: 0.02*height)),
+                gameProvider.message != "5 second break" ? ElevatedButton(
+                  onPressed: gameProvider.callDudo,
+                  style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStatePropertyAll(Colors.red.shade300),
+                  ),
+                  child: Text(
+                    "Call Dudo",
+                    style: GoogleFonts.aleo(
+                      color: Colors.black87,
+                      fontSize: 16,
+                    ),
+                  ),
+                ): const Padding(padding: EdgeInsets.all(0)),
+                // Container(alignment: Alignment.bottomCenter, width: double.infinity, height: 50, color: Colors.blueGrey,)
               ],
             ),
           );

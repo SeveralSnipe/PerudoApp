@@ -109,7 +109,7 @@ class GameProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> callDudo() async{
+  Future<void> callCalza() async{
     final Map<String, dynamic> updates = {};
     updates['/flag']=!data['flag'];
     await databaseReference.update(updates);

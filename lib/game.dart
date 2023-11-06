@@ -42,7 +42,6 @@ class _GameState extends State<Game> {
         child: Scaffold(body:
             Consumer<GameProvider>(builder: (context, gameProvider, child) {
           return Container(
-            alignment: Alignment.center,
             decoration: const BoxDecoration(
               gradient: LinearGradient(
                 colors: [Colors.orange, Colors.yellow],
@@ -83,7 +82,7 @@ class _GameState extends State<Game> {
                     },
                   ),
                 ),
-                Padding(padding: EdgeInsets.symmetric(horizontal: double.infinity, vertical: 0.1*height)),
+                Padding(padding: EdgeInsets.symmetric(horizontal: double.infinity, vertical: 0.07*height)),
                 Text(
                     gameProvider.message,
                     style: GoogleFonts.aleo(
@@ -91,7 +90,7 @@ class _GameState extends State<Game> {
                       fontSize: 16,
                     ),
                   ),
-                Padding(padding: EdgeInsets.symmetric(horizontal: double.infinity, vertical: 0.1*height)),
+                Padding(padding: EdgeInsets.symmetric(horizontal: double.infinity, vertical: 0.05*height)),
                 // ListView.builder(
                 //   scrollDirection: Axis.horizontal,
                 //   shrinkWrap: true,
@@ -126,20 +125,20 @@ class _GameState extends State<Game> {
                 ),
                 Padding(padding: EdgeInsets.symmetric(horizontal: double.infinity, vertical: 0.02*height)),
                 gameProvider.message != "5 second break" ? ElevatedButton(
-                  onPressed: gameProvider.callDudo,
+                  onPressed: gameProvider.callCalza,
                   style: ButtonStyle(
                     backgroundColor:
                         MaterialStatePropertyAll(Colors.red.shade300),
                   ),
                   child: Text(
-                    "Call Dudo",
+                    "Call Calza",
                     style: GoogleFonts.aleo(
                       color: Colors.black87,
                       fontSize: 16,
                     ),
                   ),
                 ): const Padding(padding: EdgeInsets.all(0)),
-                // Container(alignment: Alignment.bottomCenter, width: double.infinity, height: 50, color: Colors.blueGrey,)
+                Container(alignment: Alignment.bottomCenter, height: 0.1*height, color: Colors.blueGrey,)
               ],
             ),
           );

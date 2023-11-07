@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:perudo/models.dart';
 import 'package:provider/provider.dart';
 import 'package:circular_countdown_timer/circular_countdown_timer.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 
 import 'utils.dart';
 
@@ -52,8 +53,9 @@ class _GameState extends State<Game> {
             child: Column(
               children: [
                 Container(
-                  height: 0.15*height,
+                  height: 0.1 * height,
                   alignment: Alignment.topCenter,
+                  color: const Color.fromARGB(125, 255, 255, 255),
                   child: ListView.separated(
                     scrollDirection: Axis.horizontal,
                     shrinkWrap: true,
@@ -82,15 +84,80 @@ class _GameState extends State<Game> {
                     },
                   ),
                 ),
-                Padding(padding: EdgeInsets.symmetric(horizontal: double.infinity, vertical: 0.07*height)),
+                Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: double.infinity, vertical: 0.07 * height)),
                 Text(
-                    gameProvider.message,
-                    style: GoogleFonts.aleo(
-                      color: Colors.black87,
-                      fontSize: 16,
-                    ),
+                  gameProvider.message,
+                  style: GoogleFonts.aleo(
+                    color: Colors.black87,
+                    fontSize: 16,
                   ),
-                Padding(padding: EdgeInsets.symmetric(horizontal: double.infinity, vertical: 0.05*height)),
+                ),
+                Expanded(
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: CarouselSlider(
+                          options: CarouselOptions(
+                              height: 0.1 * height,
+                              scrollDirection: Axis.vertical,
+                              enlargeCenterPage: true,
+                              enlargeFactor: 0.3,
+                              viewportFraction: 0.7,
+                              enableInfiniteScroll: false,
+                              scrollPhysics: const BouncingScrollPhysics()),
+                          items: [1, 2, 3, 4, 5].map((i) {
+                            return Builder(
+                              builder: (BuildContext context) {
+                                return Container(
+                                    alignment: Alignment.center,
+                                    width: 0.2 * width,
+                                    margin:
+                                        EdgeInsets.symmetric(horizontal: 5.0),
+                                    child: Text(
+                                      '$i',
+                                      style: TextStyle(fontSize: 18),
+                                    ));
+                              },
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                      Expanded(
+                        child: CarouselSlider(
+                          options: CarouselOptions(
+                              height: 0.1 * height,
+                              scrollDirection: Axis.vertical,
+                              enlargeCenterPage: true,
+                              enlargeFactor: 0.3,
+                              viewportFraction: 0.7,
+                              enableInfiniteScroll: false,
+                              scrollPhysics: const BouncingScrollPhysics()),
+                          items: [6, 7, 8, 9, 10].map((i) {
+                            return Builder(
+                              builder: (BuildContext context) {
+                                return Container(
+                                    alignment: Alignment.center,
+                                    width: 0.2 * width,
+                                    margin:
+                                        EdgeInsets.symmetric(horizontal: 5.0),
+                                    child: Text(
+                                      '$i',
+                                      style: TextStyle(fontSize: 18),
+                                    ));
+                              },
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: double.infinity, vertical: 0.05 * height)),
                 // ListView.builder(
                 //   scrollDirection: Axis.horizontal,
                 //   shrinkWrap: true,
@@ -107,15 +174,15 @@ class _GameState extends State<Game> {
                 //   },
                 // ),
                 CircularCountDownTimer(
-                  width: 0.25*width,
-                  height: 0.15*height,
+                  width: 0.25 * width,
+                  height: 0.15 * height,
                   duration: 60,
                   controller: gameProvider.timercontroller,
-                  fillColor: Colors.green.shade400,
-                  ringColor: Colors.green.shade200,
+                  fillColor: Colors.orange.shade400,
+                  ringColor: Colors.orange.shade200,
                   isReverse: true,
                   isReverseAnimation: true,
-                  backgroundColor: Colors.green.shade400,
+                  backgroundColor: Colors.orange.shade400,
                   textStyle:
                       GoogleFonts.aleo(color: Colors.black87, fontSize: 16),
                   strokeWidth: 7,
@@ -123,22 +190,99 @@ class _GameState extends State<Game> {
                       ? gameProvider.leaderTimerExpire
                       : gameProvider.dummy,
                 ),
-                Padding(padding: EdgeInsets.symmetric(horizontal: double.infinity, vertical: 0.02*height)),
-                gameProvider.message != "5 second break" ? ElevatedButton(
-                  onPressed: gameProvider.callCalza,
-                  style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStatePropertyAll(Colors.red.shade300),
+                Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: double.infinity, vertical: 0.02 * height)),
+                gameProvider.message != "5 second break"
+                    // ? ElevatedButton(
+                    //     onPressed: gameProvider.callCalza,
+                    //     style: ButtonStyle(
+                    //       backgroundColor:
+                    //           MaterialStatePropertyAll(Colors.red.shade300),
+                    //     ),
+                    //     child: Text(
+                    //       "Calza!",
+                    //       style: GoogleFonts.praise(
+                    //         color: Colors.white,
+                    //         fontSize: 45,
+                    //       ),
+                    //     ),
+                    //   )
+                    ? Container(
+                        decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [Colors.orange, Colors.yellow],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                            borderRadius: BorderRadius.circular(30.0)),
+                        child: ElevatedButton(
+                          onPressed: gameProvider.callCalza,
+                          style: ElevatedButton.styleFrom(
+                            shape: const StadiumBorder(),
+                              backgroundColor: Colors.transparent,
+                              shadowColor: Colors.transparent),
+                          child: Text(
+                            "Calza!",
+                            style: GoogleFonts.praise(
+                              color: Colors.white,
+                              fontSize: 45,
+                            ),
+                          ),
+                        ),
+                        // height: 50.0,
+                        // child: ElevatedButton(
+                        //   onPressed: gameProvider.callCalza,
+                        //   style: ElevatedButton.styleFrom(
+                        //           backgroundColor: Colors.transparent,
+                        //           shadowColor: Colors.transparent),
+                        //   child: Ink(
+                        //     decoration: BoxDecoration(
+                        //         gradient: const LinearGradient(colors: [Colors.orange, Colors.yellow],
+                        //           begin: Alignment.topLeft,
+                        //           end: Alignment.bottomRight,
+                        //         ),
+                        //         borderRadius: BorderRadius.circular(30.0)
+                        //     ),
+                        //     child: Container(
+                        //       constraints: const BoxConstraints(maxWidth: 200.0, minHeight: 50.0),
+                        //       alignment: Alignment.center,
+                        //       child: Text(
+                        //         "Calza!",
+                        //         textAlign: TextAlign.center,
+                        //         style: GoogleFonts.praise(
+                        //           color: Colors.white,
+                        //           fontSize: 45,
+                        //         ),
+                        //       ),
+                        //     ),
+                        //   ),
+                        // ),
+                      )
+                    : const Padding(padding: EdgeInsets.all(0)),
+                    Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: double.infinity, vertical: 0.02 * height)),
+                Container(
+                  alignment: Alignment.bottomCenter,
+                  height: 0.15 * height,
+                  color: const Color.fromARGB(125, 255, 255, 255),
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    shrinkWrap: true,
+                    itemCount: 6,
+                    itemBuilder: (context, index) {
+                      String imgPath = dices[index]!;
+                      return Center(
+                        child: Image.asset(
+                          imgPath,
+                          scale: 8,
+                          color: Colors.amber,
+                        ),
+                      );
+                    },
                   ),
-                  child: Text(
-                    "Call Calza",
-                    style: GoogleFonts.aleo(
-                      color: Colors.black87,
-                      fontSize: 16,
-                    ),
-                  ),
-                ): const Padding(padding: EdgeInsets.all(0)),
-                Container(alignment: Alignment.bottomCenter, height: 0.1*height, color: Colors.blueGrey,)
+                )
               ],
             ),
           );

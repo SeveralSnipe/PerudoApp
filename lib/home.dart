@@ -24,13 +24,12 @@ class _HomeState extends State<Home> {
     Map<String, dynamic> data={
       'players':{
       inpString: {
-        'dice_count': 6,
+        'dice_count': 5,
         'd1': '',
         'd2': '',
         'd3': '',
         'd4': '',
         'd5': '',
-        'd6': '',
         'status': 'alive'
       },
       },
@@ -52,13 +51,12 @@ class _HomeState extends State<Home> {
       Map<dynamic, dynamic> values = roomRef.value as Map<dynamic, dynamic>;
       if (values['count']<6){
         Map<String, dynamic> data={
-          'dice_count': 6,
+          'dice_count': 5,
           'd1': '',
           'd2': '',
           'd3': '',
           'd4': '',
           'd5': '',
-          'd6': '',
           'status': 'alive'
       };
       final Map<String, dynamic> updates = {};

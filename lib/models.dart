@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/foundation.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -51,18 +53,25 @@ class LobbyProvider extends ChangeNotifier {
             databaseURL:
                 "https://perudo-flutter-default-rtdb.asia-southeast1.firebasedatabase.app/")
         .ref('Rooms/$code');
+    Random random = Random();
     var playersRef = await databaseReference.child('/players').get();
     final Map<String, dynamic> updates = {};
     if (playersRef.value != null) {
       Map<dynamic, dynamic> values = playersRef.value as Map<dynamic, dynamic>;
       int playerNum = 1;
+      updates['/total_dice'] = 0;
       for (var player in values.keys) {
+        for (var i = 0; i < values[player]['dice_count']; i++) {
+          updates['/players/$player/d${i+1}'] = random.nextInt(6)+1;
+        }
         updates['/players/$player/order'] = playerNum;
+        updates['/total_dice'] += 5;
         playerNum++;
       }
-      updates['/total_dice'] = values['count'] * 5;
     }
     updates['/status'] = 'started';
+    updates['/current_face'] = 0;
+    updates['/current_number'] = 0;
     await databaseReference.update(updates);
     await databaseReference.child('/player_turn').set(1);
     await databaseReference.child('/flag').set(true);
@@ -77,27 +86,29 @@ class GameProvider extends ChangeNotifier {
   late DatabaseReference databaseReference;
   final String code;
   late Map<dynamic, dynamic> data;
+  late bool isLeader;
   CountDownController timercontroller = CountDownController();
   CountDownController breakcontroller = CountDownController();
   bool timerFlag = true; // true for 1 min false for 5 second
   String message = '1 Min timer';
-  List initFaces = [2, 3, 4, 5, 6];
-  late List initNumber;
+  List faces = [2, 3, 4, 5, 6];
+  List numbers = [];
   // late Map<int, String> playerOrder;
 
-  GameProvider(this.code, this.data) {
+  GameProvider(this.code, this.data, this.isLeader){
     databaseReference = FirebaseDatabase(
             databaseURL:
                 "https://perudo-flutter-default-rtdb.asia-southeast1.firebasedatabase.app/")
         .ref('Rooms/$code');
     for (var i = 0; i < data['total_dice']; i++) {
-      initNumber.add(i + 1);
+      numbers.add(i + 1);
     }
-    databaseReference.onValue.listen((event) {
+    databaseReference.onValue.listen((event){
       if (event.snapshot.value != null) {
         data = event.snapshot.value as Map;
+        numbers.clear();
         for (var i = 0; i < data['total_dice']; i++) {
-          initNumber.add(i + 1);
+          numbers.add(i + 1);
         }
         if (data['flag']) {
           message = '1 Min timer';
@@ -107,23 +118,30 @@ class GameProvider extends ChangeNotifier {
           timercontroller.restart(duration: 5);
         }
       }
-
       notifyListeners();
     });
   }
 
-  Future<void> leaderTimerExpire() async {
-    final Map<String, dynamic> updates = {};
+  Future<void> flipTimerFlag() async {
+     Map<String, dynamic> updates = {};
+    if (!data['flag'] && isLeader) updates = rollDice();
     updates['/flag'] = !data['flag'];
     await databaseReference.update(updates);
-    notifyListeners();
   }
 
-  Future<void> callCalza() async {
-    final Map<String, dynamic> updates = {};
-    updates['/flag'] = !data['flag'];
-    await databaseReference.update(updates);
-    notifyListeners();
+  Map<String,dynamic> rollDice() {
+      Random random = Random();
+      final Map<String, dynamic> updates = {};
+      for (var player in data['players'].keys) {
+        for (var i = 0; i < data['players'][player]['dice_count']; i++) {
+          updates['/players/$player/d${i+1}'] = random.nextInt(6)+1;
+        }
+      }
+      return updates;
+    }
+
+  void changedFace(int face){
+
   }
 
   void dummy() {

@@ -9,12 +9,12 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'utils.dart';
 
 const Map<int, String> dices = {
-  0: "assets/images/dice-six-faces-one.png",
-  1: "assets/images/dice-six-faces-two.png",
-  2: "assets/images/dice-six-faces-three.png",
-  3: "assets/images/dice-six-faces-four.png",
-  4: "assets/images/dice-six-faces-five.png",
-  5: "assets/images/dice-six-faces-six.png",
+  1: "assets/images/dice-six-faces-one.png",
+  2: "assets/images/dice-six-faces-two.png",
+  3: "assets/images/dice-six-faces-three.png",
+  4: "assets/images/dice-six-faces-four.png",
+  5: "assets/images/dice-six-faces-five.png",
+  6: "assets/images/dice-six-faces-six.png",
 };
 
 class Game extends StatefulWidget {
@@ -39,7 +39,8 @@ class _GameState extends State<Game> {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     return ChangeNotifierProvider(
-        create: (context) => GameProvider(widget.lobbyCode, widget.initData),
+        create: (context) => GameProvider(widget.lobbyCode, widget.initData,
+            widget.leadername == widget.playername),
         child: Scaffold(body:
             Consumer<GameProvider>(builder: (context, gameProvider, child) {
           return Container(
@@ -106,15 +107,19 @@ class _GameState extends State<Game> {
                               enlargeFactor: 0.3,
                               viewportFraction: 0.7,
                               enableInfiniteScroll: false,
-                              scrollPhysics: const BouncingScrollPhysics()),
-                          items: [1, 2, 3, 4, 5].map((i) {
+                              scrollPhysics: const BouncingScrollPhysics()
+                              // onPageChanged: (index, reason) {
+
+                              // },
+                              ),
+                          items: gameProvider.faces.map((i) {
                             return Builder(
                               builder: (BuildContext context) {
                                 return Container(
                                     alignment: Alignment.center,
                                     width: 0.2 * width,
-                                    margin:
-                                        const EdgeInsets.symmetric(horizontal: 5.0),
+                                    margin: const EdgeInsets.symmetric(
+                                        horizontal: 5.0),
                                     child: Text(
                                       '$i',
                                       style: const TextStyle(fontSize: 18),
@@ -134,14 +139,14 @@ class _GameState extends State<Game> {
                               viewportFraction: 0.7,
                               enableInfiniteScroll: false,
                               scrollPhysics: const BouncingScrollPhysics()),
-                          items: [6, 7, 8, 9, 10].map((i) {
+                          items: gameProvider.numbers.map((i) {
                             return Builder(
                               builder: (BuildContext context) {
                                 return Container(
                                     alignment: Alignment.center,
                                     width: 0.2 * width,
-                                    margin:
-                                        const EdgeInsets.symmetric(horizontal: 5.0),
+                                    margin: const EdgeInsets.symmetric(
+                                        horizontal: 5.0),
                                     child: Text(
                                       '$i',
                                       style: const TextStyle(fontSize: 18),
@@ -154,7 +159,6 @@ class _GameState extends State<Game> {
                     ],
                   ),
                 ),
-
                 Padding(
                     padding: EdgeInsets.symmetric(
                         horizontal: double.infinity, vertical: 0.05 * height)),
@@ -168,11 +172,11 @@ class _GameState extends State<Game> {
                   isReverse: true,
                   isReverseAnimation: true,
                   backgroundColor: Colors.orange.shade400,
-                  textStyle:
-                      GoogleFonts.luckiestGuy(color: Colors.black87, fontSize: 16),
+                  textStyle: GoogleFonts.luckiestGuy(
+                      color: Colors.black87, fontSize: 16),
                   strokeWidth: 7,
                   onComplete: widget.playername == widget.leadername
-                      ? gameProvider.leaderTimerExpire
+                      ? gameProvider.flipTimerFlag
                       : gameProvider.dummy,
                 ),
                 Padding(
@@ -188,9 +192,9 @@ class _GameState extends State<Game> {
                             ),
                             borderRadius: BorderRadius.circular(30.0)),
                         child: ElevatedButton(
-                          onPressed: gameProvider.callCalza,
+                          onPressed: gameProvider.flipTimerFlag,
                           style: ElevatedButton.styleFrom(
-                            shape: const StadiumBorder(),
+                              shape: const StadiumBorder(),
                               backgroundColor: Colors.transparent,
                               shadowColor: Colors.transparent),
                           child: Text(
@@ -203,9 +207,19 @@ class _GameState extends State<Game> {
                         ),
                       )
                     : const Padding(padding: EdgeInsets.all(0)),
-                    Padding(
+                Padding(
                     padding: EdgeInsets.symmetric(
                         horizontal: double.infinity, vertical: 0.02 * height)),
+                ElevatedButton(
+                  onPressed: gameProvider.rollDice,
+                  child: Text(
+                    "Test Dice Roll",
+                    style: GoogleFonts.macondo(
+                      color: Colors.white,
+                      fontSize: 45,
+                    ),
+                  ),
+                ),
                 Container(
                   alignment: Alignment.bottomCenter,
                   height: 0.15 * height,
@@ -213,9 +227,10 @@ class _GameState extends State<Game> {
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     shrinkWrap: true,
-                    itemCount: 6,
+                    itemCount: gameProvider.data['players'][widget.playername]['dice_count'],
                     itemBuilder: (context, index) {
-                      String imgPath = dices[index]!;
+                      int diceNum = gameProvider.data['players'][widget.playername]['d${index+1}'];
+                      String imgPath = dices[diceNum]!;
                       return Center(
                         child: Image.asset(
                           imgPath,

@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:circular_countdown_timer/circular_countdown_timer.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 
 class LobbyProvider extends ChangeNotifier {
   late DatabaseReference databaseReference;
@@ -62,7 +63,7 @@ class LobbyProvider extends ChangeNotifier {
       updates['/total_dice'] = 0;
       for (var player in values.keys) {
         for (var i = 0; i < values[player]['dice_count']; i++) {
-          updates['/players/$player/d${i+1}'] = random.nextInt(6)+1;
+          updates['/players/$player/d${i + 1}'] = random.nextInt(6) + 1;
         }
         updates['/players/$player/order'] = playerNum;
         updates['/total_dice'] += 5;
@@ -72,9 +73,14 @@ class LobbyProvider extends ChangeNotifier {
     updates['/status'] = 'started';
     updates['/current_face'] = 0;
     updates['/current_number'] = 0;
+    updates['/first_turn'] = true;
+    updates['/minutes_flag'] = true;
+    updates['/seconds_flag'] = false;
+    updates['/player_turn'] = 1;
+    updates['/message'] = 'First turn of the game';
     await databaseReference.update(updates);
-    await databaseReference.child('/player_turn').set(1);
-    await databaseReference.child('/flag').set(true);
+    // await databaseReference.child('/player_turn').set(1);
+    // await databaseReference.child('/flag').set(true);
     started = true;
     var gameRef = await databaseReference.get();
     gameData = gameRef.value as Map<dynamic, dynamic>;
@@ -87,15 +93,20 @@ class GameProvider extends ChangeNotifier {
   final String code;
   late Map<dynamic, dynamic> data;
   late bool isLeader;
+  final String player;
   CountDownController timercontroller = CountDownController();
   CountDownController breakcontroller = CountDownController();
+  CarouselController faceController = CarouselController();
+  CarouselController numberController = CarouselController();
   bool timerFlag = true; // true for 1 min false for 5 second
-  String message = '1 Min timer';
   List faces = [2, 3, 4, 5, 6];
   List numbers = [];
+  int centerFace = 2;
+  int centerNumber = 1;
   // late Map<int, String> playerOrder;
+  // FIGURE OUT TIMER ISSUE ON BET, FIX SOME EDGE CASES FOR CAROUSEL VALUES
 
-  GameProvider(this.code, this.data, this.isLeader){
+  GameProvider(this.code, this.data, this.isLeader, this.player) {
     databaseReference = FirebaseDatabase(
             databaseURL:
                 "https://perudo-flutter-default-rtdb.asia-southeast1.firebasedatabase.app/")
@@ -103,19 +114,51 @@ class GameProvider extends ChangeNotifier {
     for (var i = 0; i < data['total_dice']; i++) {
       numbers.add(i + 1);
     }
-    databaseReference.onValue.listen((event){
+    databaseReference.onValue.listen((event) {
       if (event.snapshot.value != null) {
+        Map<dynamic, dynamic> olddata = data;
         data = event.snapshot.value as Map;
-        numbers.clear();
-        for (var i = 0; i < data['total_dice']; i++) {
-          numbers.add(i + 1);
+        print(olddata==data);
+        if (data['player_turn'] == data['players'][player]['order']) {
+          numbers.clear();
+          if (data['first_turn']) {
+            faces = [2, 3, 4, 5, 6];
+
+            for (var i = 0; i < data['total_dice']; i++) {
+              numbers.add(i + 1);
+            }
+            numberController.jumpToPage(0);
+            faceController.jumpToPage(0);
+          } else {
+            // jump to face 2
+            faces = [1, 2, 3, 4, 5, 6];
+            if (data['current_face'] == 1) {
+              for (var i = (data['current_number'] * 2) + 1;
+                  i < data['total_dice'];
+                  i++) {
+                numbers.add(i + 1);
+              }
+            } else {
+              for (var i = data['current_number'];
+                  i < data['total_dice'];
+                  i++) {
+                numbers.add(i + 1);
+              }
+            }
+            faceController.jumpToPage(1);
+            numberController.jumpToPage(0);
+          }
         }
-        if (data['flag']) {
-          message = '1 Min timer';
+        // if (data['current_face']!=olddata['current_face'] || data['current_number']!=olddata['current_number']){
+        //   timercontroller.restart(duration: 60);
+        // }
+        if (data['minutes_flag']!=olddata['minutes_flag']) {
           timercontroller.restart(duration: 60);
-        } else {
-          message = '5 second break';
-          timercontroller.restart(duration: 5);
+        } 
+        if (data['seconds_flag']!=olddata['seconds_flag']) {
+          if (data['seconds_flag']) {
+            timercontroller.restart(duration: 5);
+          }
         }
       }
       notifyListeners();
@@ -123,25 +166,101 @@ class GameProvider extends ChangeNotifier {
   }
 
   Future<void> flipTimerFlag() async {
-     Map<String, dynamic> updates = {};
+    Map<String, dynamic> updates = {};
     if (!data['flag'] && isLeader) updates = rollDice();
     updates['/flag'] = !data['flag'];
     await databaseReference.update(updates);
   }
 
-  Map<String,dynamic> rollDice() {
-      Random random = Random();
-      final Map<String, dynamic> updates = {};
-      for (var player in data['players'].keys) {
-        for (var i = 0; i < data['players'][player]['dice_count']; i++) {
-          updates['/players/$player/d${i+1}'] = random.nextInt(6)+1;
+  Future<void> leaderTimerExpire() async{
+    if(data['seconds_flag']){
+      restartTimer('5 Second timer expired',false);
+    }
+    else{
+      restartTimer('1 minute timer expired',true);
+      // implement player inactive kick
+    }
+  }
+
+  Map<String, dynamic> rollDice() {
+    Random random = Random();
+    final Map<String, dynamic> updates = {};
+    for (var player in data['players'].keys) {
+      for (var i = 0; i < data['players'][player]['dice_count']; i++) {
+        updates['/players/$player/d${i + 1}'] = random.nextInt(6) + 1;
+      }
+    }
+    return updates;
+  }
+
+  void changedFace(int faceidx) {
+    centerFace = faces[faceidx];
+    if(data['first_turn']) return;
+    numbers.clear();
+    if (data['current_face'] != 1) {
+      if (centerFace != 1) {
+        if (centerFace <= data['current_face']) {
+          for (var i = data['current_number']; i < data['total_dice']; i++) {
+            numbers.add(i + 1);
+          }
+        } else {
+          for (var i = 0; i < data['total_dice']; i++) {
+            numbers.add(i + 1);
+          }
+        }
+      } else {
+        for (var i = (data['current_number'] / 2).ceil() - 1;
+            i < data['total_dice'];
+            i++) {
+          numbers.add(i + 1);
         }
       }
-      return updates;
+    } else {
+      if (centerFace == 1) {
+        for (var i = data['current_number']; i < data['total_dice']; i++) {
+          numbers.add(i + 1);
+        }
+      } else {
+        for (var i = (data['current_number'] * 2) + 1;
+            i < data['total_dice'];
+            i++) {
+          numbers.add(i + 1);
+        }
+      }
     }
 
-  void changedFace(int face){
+    notifyListeners();
+  }
 
+  void changedNumber(int numidx){
+    centerNumber = numbers[numidx];
+  }
+
+  Future<void> placeBet() async{
+    int face = centerFace;
+    int number = centerNumber;
+    final Map<String, dynamic> updates = {};
+    updates['/message'] = "$player thinks that there are $number ${face}s in total";
+    updates['/current_face'] = face;
+    updates['/current_number'] = number;
+    if(data['first_turn']){
+      updates['/first_turn'] = false;
+    }
+    updates['/player_turn'] = (data['player_turn']%data['count'])+1;
+    updates['/minutes_flag'] = !data['minutes_flag'];
+    await databaseReference.update(updates);
+  }
+
+  Future<void> restartTimer(String message, bool type) async{ //'type' is for 1 minute or 5 seconds
+    final Map<String, dynamic> updates = {};
+    if(type){
+      updates['/minutes_flag'] = !data['minutes_flag'];
+    }
+    else{
+      updates['/seconds_flag'] = !data['seconds_flag'];
+    }
+    updates['/message'] = message;
+    await databaseReference.update(updates);
   }
 
   void dummy() {

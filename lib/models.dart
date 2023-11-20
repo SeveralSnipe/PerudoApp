@@ -56,20 +56,21 @@ class LobbyProvider extends ChangeNotifier {
                 "https://perudo-flutter-default-rtdb.asia-southeast1.firebasedatabase.app/")
         .ref('Rooms/$code');
     Random random = Random();
-    var playersRef = await databaseReference.child('/players').get();
+    var playersRef = await databaseReference.get();
     final Map<String, dynamic> updates = {};
     if (playersRef.value != null) {
       Map<dynamic, dynamic> values = playersRef.value as Map<dynamic, dynamic>;
       int playerNum = 1;
       updates['/total_dice'] = 0;
-      for (var player in values.keys) {
-        for (var i = 0; i < values[player]['dice_count']; i++) {
+      for (var player in values['players'].keys) {
+        for (var i = 0; i < values['players'][player]['dice_count']; i++) {
           updates['/players/$player/d${i + 1}'] = random.nextInt(6) + 1;
         }
         updates['/players/$player/order'] = playerNum;
         updates['/total_dice'] += 5;
         playerNum++;
       }
+      updates['/alive_count'] = values['count'];
     }
     updates['/status'] = 'started';
     updates['/current_face'] = 0;
@@ -83,8 +84,7 @@ class LobbyProvider extends ChangeNotifier {
     // await databaseReference.child('/player_turn').set(1);
     // await databaseReference.child('/flag').set(true);
     started = true;
-    var gameRef = await databaseReference.get();
-    gameData = gameRef.value as Map<dynamic, dynamic>;
+    gameData = playersRef.value as Map<dynamic, dynamic>;
     notifyListeners();
   }
 }
@@ -127,31 +127,34 @@ class GameProvider extends ChangeNotifier {
             for (var i = 0; i < data['total_dice']; i++) {
               numbers.add(i + 1);
             }
-            changedNumber(0);
-            numberController.jumpToPage(0);
-            faceController.jumpToPage(0);
+            changedFace(0);
+            // numberController.animateToPage(0);
+            // faceController.animateToPage(0);
           } else {
             // jump to face 2
             faces = [1, 2, 3, 4, 5, 6];
             if (data['current_face'] == 1) {
-              for (var i = (data['current_number'] * 2);
+              for (var i = (data['current_number']);
                   i < data['total_dice'];
                   i++) {
                 numbers.add(i + 1);
               }
             } else {
-              for (var i = data['current_number'];
+              for (var i = (data['current_number'] / 2).ceil() - 1;
                   i < data['total_dice'];
                   i++) {
                 numbers.add(i + 1);
               }
             }
             print('reached b4 changednumber');
+            centerFace = 1;
             changedNumber(0);
             print('reached after changednumber');
-            faceController.jumpToPage(1);
-            print('reached after face jump 1');
-            numberController.jumpToPage(0);
+            // notifyListeners();
+            // sleep(const Duration(seconds: 3));
+            // faceController.animateToPage(0);
+            // print('reached after face jump 0');
+            // numberController.animateToPage(0);
             print('reached after num jump 0');
           }
         }

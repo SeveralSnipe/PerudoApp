@@ -66,16 +66,18 @@ class _GameState extends State<Game> {
                         if (gameProvider.data['players'][player]['order'] ==
                             index + 1) {
                           return Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                              children:[ Text(
-                            '$player',
-                            style: GoogleFonts.aleo(
-                                color: player == widget.playername
-                                    ? Colors.blue
-                                    : Colors.black,
-                                fontSize: 16),
-                          ),
-                          const Text('')]);
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  '$player',
+                                  style: GoogleFonts.aleo(
+                                      color: player == widget.playername
+                                          ? Colors.blue
+                                          : Colors.black,
+                                      fontSize: 16),
+                                ),
+                                const Text('')
+                              ]);
                         }
                       }
                     },
@@ -100,75 +102,85 @@ class _GameState extends State<Game> {
                 Padding(
                     padding: EdgeInsets.symmetric(
                         horizontal: double.infinity, vertical: 0.03 * height)),
-                gameProvider.data['player_turn'] == gameProvider.data['players'][widget.playername]['order'] ? Expanded(
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: CarouselSlider(
-                          carouselController: gameProvider.faceController,
-                          options: CarouselOptions(
-                              height: 0.1 * height,
-                              scrollDirection: Axis.vertical,
-                              enlargeCenterPage: true,
-                              enlargeFactor: 0.5,
-                              viewportFraction: 0.7,
-                              enableInfiniteScroll: false,
-                              scrollPhysics: const BouncingScrollPhysics(),
-                              onPageChanged: (index, reason) {
-                                gameProvider.changedFace(index);
-                              },
-                              ),
-                          items: gameProvider.faces.map((i) {
-                            return Builder(
-                              builder: (BuildContext context) {
-                                return Container(
-                                    alignment: Alignment.center,
-                                    width: 0.2 * width,
-                                    margin: const EdgeInsets.symmetric(
-                                        horizontal: 5.0),
-                                    child: Text(
-                                      '$i',
-                                      style: const TextStyle(fontSize: 23),
-                                    ));
-                              },
-                            );
-                          }).toList(),
-                        ),
-                      ),
-                      Expanded(
-                        child: CarouselSlider(
-                          carouselController: gameProvider.numberController,
-                          options: CarouselOptions(
-                              height: 0.1 * height,
-                              scrollDirection: Axis.vertical,
-                              enlargeCenterPage: true,
-                              enlargeFactor: 0.5,
-                              viewportFraction: 0.7,
-                              enableInfiniteScroll: false,
-                              scrollPhysics: const BouncingScrollPhysics(),
-                              onPageChanged: (index, reason) {
-                                gameProvider.changedNumber(index);
-                              },),
-                          items: gameProvider.numbers.map((i) {
-                            return Builder(
-                              builder: (BuildContext context) {
-                                return Container(
-                                    alignment: Alignment.center,
-                                    width: 0.2 * width,
-                                    margin: const EdgeInsets.symmetric(
-                                        horizontal: 5.0),
-                                    child: Text(
-                                      '$i',
-                                      style: const TextStyle(fontSize: 23),
-                                    ));
-                              },
-                            );
-                          }).toList(),
-                        ),
-                      ),
-                    ],
-                  ),
-                ) : const Padding(padding: EdgeInsets.all(0)),
+                gameProvider.data['player_turn'] ==
+                        gameProvider.data['players'][widget.playername]['order']
+                    ? Expanded(
+                        child: Row(children: [
+                          Expanded(
+                            child: CarouselSlider(
+                                  carouselController:
+                                      gameProvider.faceController,
+                                  options: CarouselOptions(
+                                    height: 0.1 * height,
+                                    scrollDirection: Axis.vertical,
+                                    enlargeCenterPage: true,
+                                    enlargeFactor: 0.5,
+                                    viewportFraction: 0.7,
+                                    enableInfiniteScroll: false,
+                                    scrollPhysics:
+                                        const BouncingScrollPhysics(),
+                                    onPageChanged: (index, reason) {
+                                      gameProvider.changedFace(index);
+                                    },
+                                  ),
+                                  items: gameProvider.faces.map((i) {
+                                    return Builder(
+                                      builder: (BuildContext context) {
+                                        return Container(
+                                            alignment: Alignment.center,
+                                            width: 0.2 * width,
+                                            margin: const EdgeInsets.symmetric(
+                                                horizontal: 5.0),
+                                            child: Text(
+                                              '$i',
+                                              style:
+                                                  const TextStyle(fontSize: 23),
+                                            ));
+                                      },
+                                    );
+                                  }).toList(),
+                                )),
+                              
+                            
+                          Expanded(
+                            child: CarouselSlider(
+                                  carouselController:
+                                      gameProvider.numberController,
+                                  options: CarouselOptions(
+                                    height: 0.1 * height,
+                                    scrollDirection: Axis.vertical,
+                                    enlargeCenterPage: true,
+                                    enlargeFactor: 0.5,
+                                    viewportFraction: 0.7,
+                                    enableInfiniteScroll: false,
+                                    scrollPhysics:
+                                        const BouncingScrollPhysics(),
+                                    onPageChanged: (index, reason) {
+                                      gameProvider.changedNumber(index);
+                                    },
+                                  ),
+                                  items: gameProvider.numbers.map((i) {
+                                    return Builder(
+                                      builder: (BuildContext context) {
+                                        return Container(
+                                            alignment: Alignment.center,
+                                            width: 0.2 * width,
+                                            margin: const EdgeInsets.symmetric(
+                                                horizontal: 5.0),
+                                            child: Text(
+                                              '$i',
+                                              style:
+                                                  const TextStyle(fontSize: 23),
+                                            ));
+                                      },
+                                    );
+                                  }).toList(),
+                                )
+                            ),
+                          
+                        ]),
+                      )
+                    : const Padding(padding: EdgeInsets.all(0)),
                 Padding(
                     padding: EdgeInsets.symmetric(
                         horizontal: double.infinity, vertical: 0.05 * height)),
@@ -194,59 +206,62 @@ class _GameState extends State<Game> {
                         horizontal: double.infinity, vertical: 0.02 * height)),
                 gameProvider.data['message'] != "5 second break"
                     ? Column(
-                      children: [
-                          Container(
-                              decoration: BoxDecoration(
-                                  gradient: const LinearGradient(
-                                    colors: [Colors.orange, Colors.yellow],
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                  ),
-                                  borderRadius: BorderRadius.circular(30.0)),
-                              child: ElevatedButton(
-                                onPressed: gameProvider.placeBet,
-                                style: ElevatedButton.styleFrom(
-                                    shape: const StadiumBorder(),
-                                    backgroundColor: Colors.transparent,
-                                    shadowColor: Colors.transparent),
-                                child: Text(
-                                  "Place Bet",
-                                  style: GoogleFonts.macondo(
-                                    color: Colors.black,
-                                    fontSize: 30,
-                                  ),
+                        children: [
+                          gameProvider.data['player_turn'] == gameProvider.data['players'][widget.playername]['order'] ? Container(
+                            decoration: BoxDecoration(
+                                gradient: const LinearGradient(
+                                  colors: [Colors.orange, Colors.yellow],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                                borderRadius: BorderRadius.circular(30.0)),
+                            child: ElevatedButton(
+                              onPressed: gameProvider.placeBet,
+                              style: ElevatedButton.styleFrom(
+                                  shape: const StadiumBorder(),
+                                  backgroundColor: Colors.transparent,
+                                  shadowColor: Colors.transparent),
+                              child: Text(
+                                "Place Bet",
+                                style: GoogleFonts.macondo(
+                                  color: Colors.black,
+                                  fontSize: 30,
                                 ),
                               ),
                             ),
-                          
-                          Padding(padding: EdgeInsets.symmetric(horizontal: double.infinity, vertical: 0.01*height)),
-                          Container(
-                              decoration: BoxDecoration(
-                                  gradient: const LinearGradient(
-                                    colors: [Colors.orange, Colors.yellow],
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                  ),
-                                  borderRadius: BorderRadius.circular(30.0)),
-                              child: ElevatedButton(
-                                onPressed: () {},
-                                style: ElevatedButton.styleFrom(
-                                    shape: const StadiumBorder(),
-                                    backgroundColor: Colors.transparent,
-                                    shadowColor: Colors.transparent),
-                                child: Text(
-                                  "Challenge",
-                                  style: GoogleFonts.macondo(
-                                    color: Colors.black,
-                                    fontSize: 30,
-                                  ),
+                          )  : const SizedBox.shrink(),
+                          Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: double.infinity,
+                                  vertical: 0.01 * height)),
+                          (gameProvider.data['player_turn'] == gameProvider.data['players'][widget.playername]['order']) && !gameProvider.data['first_turn'] ? Container(
+                            decoration: BoxDecoration(
+                                gradient: const LinearGradient(
+                                  colors: [Colors.orange, Colors.yellow],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                                borderRadius: BorderRadius.circular(30.0)),
+                            child: ElevatedButton(
+                              onPressed: () {},
+                              style: ElevatedButton.styleFrom(
+                                  shape: const StadiumBorder(),
+                                  backgroundColor: Colors.transparent,
+                                  shadowColor: Colors.transparent),
+                              child: Text(
+                                "Challenge",
+                                style: GoogleFonts.macondo(
+                                  color: Colors.black,
+                                  fontSize: 30,
                                 ),
                               ),
                             ),
-                          
-                          Padding(padding: EdgeInsets.symmetric(horizontal: double.infinity, vertical: 0.01*height)),
-                          
-                          Container(
+                          ): const SizedBox.shrink(),
+                          Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: double.infinity,
+                                  vertical: 0.01 * height)),
+                          (gameProvider.data['player_turn'] != gameProvider.data['players'][widget.playername]['order']) && (gameProvider.data['alive_count']) > 2 ? Container(
                             decoration: BoxDecoration(
                                 gradient: const LinearGradient(
                                   colors: [Colors.blue, Colors.blueGrey],
@@ -268,14 +283,15 @@ class _GameState extends State<Game> {
                                 ),
                               ),
                             ),
-                          ),
-                      ],
-                    )
+                          ) : const SizedBox.shrink(),
+                        ],
+                      )
                     : const Padding(padding: EdgeInsets.all(0)),
                 Expanded(
                   child: Padding(
                       padding: EdgeInsets.symmetric(
-                          horizontal: double.infinity, vertical: 0.02 * height)),
+                          horizontal: double.infinity,
+                          vertical: 0.02 * height)),
                 ),
                 Container(
                   alignment: Alignment.bottomCenter,
@@ -284,9 +300,11 @@ class _GameState extends State<Game> {
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     shrinkWrap: true,
-                    itemCount: gameProvider.data['players'][widget.playername]['dice_count'],
+                    itemCount: gameProvider.data['players'][widget.playername]
+                        ['dice_count'],
                     itemBuilder: (context, index) {
-                      int diceNum = gameProvider.data['players'][widget.playername]['d${index+1}'];
+                      int diceNum = gameProvider.data['players']
+                          [widget.playername]['d${index + 1}'];
                       String imgPath = dices[diceNum]!;
                       return Center(
                         child: Image.asset(

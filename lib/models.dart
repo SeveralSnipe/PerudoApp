@@ -103,8 +103,9 @@ class GameProvider extends ChangeNotifier {
   List numbers = [];
   int centerFace = 2;
   int centerNumber = 1;
+  bool compulsoryChallenge = false;
   // late Map<int, String> playerOrder;
-  // FIGURE OUT TIMER ISSUE ON BET, FIX SOME EDGE CASES FOR CAROUSEL VALUES
+  // IMPLEMENT DICE REMOVAL, PLAYER LOSE, CHALLENGE, CALZA
 
   GameProvider(this.code, this.data, this.isLeader, this.player) {
     databaseReference = FirebaseDatabase(
@@ -115,10 +116,10 @@ class GameProvider extends ChangeNotifier {
       numbers.add(i + 1);
     }
     databaseReference.onValue.listen((event) {
+      compulsoryChallenge = false;
       if (event.snapshot.value != null) {
         Map<dynamic, dynamic> olddata = data;
         data = event.snapshot.value as Map;
-        print(olddata['minutes_flag']==data['minutes_flag']);
         if (data['player_turn'] == data['players'][player]['order']) {
           numbers.clear();
           if (data['first_turn']) {
@@ -130,17 +131,35 @@ class GameProvider extends ChangeNotifier {
             changedFace(0);
             // numberController.animateToPage(0);
             // faceController.animateToPage(0);
+          } else if (data['current_number'] == data['total_dice']) {
+            if (data['current_face'] == 1) {
+              compulsoryChallenge = true;
+              numbers.add(0);
+            } else {
+              faces = [
+                1,
+              ];
+              for (var i = (data['current_number'] / 2).ceil() - 1;
+                  i < data['total_dice'];
+                  i++) {
+                numbers.add(i + 1);
+              }
+            }
+            centerFace = 1;
+            changedNumber(0);
           } else {
-            // jump to face 2
             faces = [1, 2, 3, 4, 5, 6];
             if (data['current_face'] == 1) {
+              if (data['current_number'] >= data['total_dice'] / 2) {
+                faces = [1, ];
+              }
               for (var i = (data['current_number']);
                   i < data['total_dice'];
                   i++) {
                 numbers.add(i + 1);
               }
             } else {
-              for (var i = (data['current_number'] / 2).ceil() - 1;
+              for (var i = (data['current_number'] / 2).ceil();
                   i < data['total_dice'];
                   i++) {
                 numbers.add(i + 1);
@@ -161,13 +180,16 @@ class GameProvider extends ChangeNotifier {
         // if (data['current_face']!=olddata['current_face'] || data['current_number']!=olddata['current_number']){
         //   timercontroller.restart(duration: 60);
         // }
-        if (data['minutes_flag']!=olddata['minutes_flag']) {
+        if (data['minutes_flag'] != olddata['minutes_flag']) {
           timercontroller.restart(duration: 60);
           print('restart signal 1 min given');
-        } 
-        if (data['seconds_flag']!=olddata['seconds_flag']) {
+        }
+        if (data['seconds_flag'] != olddata['seconds_flag']) {
           if (data['seconds_flag']) {
             timercontroller.restart(duration: 5);
+          }
+          else{
+            timercontroller.restart(duration: 60);
           }
         }
       }
@@ -182,13 +204,36 @@ class GameProvider extends ChangeNotifier {
     await databaseReference.update(updates);
   }
 
-  Future<void> leaderTimerExpire() async{
+  Future<void> leaderTimerExpire() async {
     Map<String, dynamic> updates;
-    if(data['seconds_flag']){
-      updates = restartTimer('5 Second timer expired',false);
-    }
-    else{
-      updates= restartTimer('1 minute timer expired',true);
+    if (data['seconds_flag']) {
+      updates = restartTimer('5 Second timer expired', false);
+    } else {
+      String currentPlayer = '';
+      for (var player in data['players'].keys){
+        if (data['players'][player]['order']==data['player_turn']) {
+          currentPlayer = player;
+        }
+      }
+      updates = restartTimer('$currentPlayer is inactive and has been eliminated.', false);
+      int diceRemoved = data['players'][currentPlayer]['dice_count'];
+      updates['/total_dice'] = data['total_dice'] - diceRemoved;
+      updates['/players/$currentPlayer/dice_count'] = 0;
+      updates['/players/$currentPlayer/status'] = 'eliminated';
+      updates['/alive_count'] = data['alive_count'] - 1;
+      updates['/first_turn'] = true;
+      updates['/current_face'] = 0;
+      updates['/current_number'] = 0;
+      updates['/players/$currentPlayer/order'] = -1;
+      if (data['player_turn']==data['alive_count']) {
+        updates['/player_turn'] = 1;
+      } else{
+        for (var player in data['players'].keys){
+          if (data['players'][player]['status']=='alive' && data['players'][player]['order']>data['players'][currentPlayer]['order']) {
+            updates['/players/$player/order'] = data['players'][player]['order'] - 1;
+          }
+        }
+      }
       // implement player inactive kick
     }
     await databaseReference.update(updates);
@@ -207,13 +252,13 @@ class GameProvider extends ChangeNotifier {
 
   void changedFace(int faceidx) {
     centerFace = faces[faceidx];
-    if(data['first_turn']) return;
+    if (data['first_turn']) return;
     numbers.clear();
     if (data['current_face'] != 1) {
       if (centerFace != 1) {
-          for (var i = data['current_number']; i < data['total_dice']; i++) {
-            numbers.add(i + 1);
-          }
+        for (var i = data['current_number']; i < data['total_dice']; i++) {
+          numbers.add(i + 1);
+        }
       } else {
         for (var i = (data['current_number'] / 2).ceil() - 1;
             i < data['total_dice'];
@@ -240,31 +285,32 @@ class GameProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void changedNumber(int numidx){
+  void changedNumber(int numidx) {
     centerNumber = numbers[numidx];
   }
 
-  Future<void> placeBet() async{
+  Future<void> placeBet() async {
     int face = centerFace;
     int number = centerNumber;
     Map<String, dynamic> updates;
-    updates = restartTimer("$player thinks that there are $number ${face}s in total", true);
+    updates = restartTimer(
+        "$player thinks that there are $number ${face}s in total", true);
     updates['/current_face'] = face;
     updates['/current_number'] = number;
-    if(data['first_turn']){
+    if (data['first_turn']) {
       updates['/first_turn'] = false;
     }
     // When eliminating player, change player turn logic
-    updates['/player_turn'] = (data['player_turn']%data['count'])+1;
+    updates['/player_turn'] = (data['player_turn'] % data['count']) + 1;
     await databaseReference.update(updates);
   }
 
-  Map<String, dynamic> restartTimer(String message, bool type){ //'type' is for 1 minute or 5 seconds
+  Map<String, dynamic> restartTimer(String message, bool type) {
+    //'type' is for 1 minute or 5 seconds
     final Map<String, dynamic> updates = {};
-    if(type){
+    if (type) {
       updates['/minutes_flag'] = !data['minutes_flag'];
-    }
-    else{
+    } else {
       updates['/seconds_flag'] = !data['seconds_flag'];
     }
     updates['/message'] = message;

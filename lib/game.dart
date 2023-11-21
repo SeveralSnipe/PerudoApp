@@ -102,8 +102,8 @@ class _GameState extends State<Game> {
                 Padding(
                     padding: EdgeInsets.symmetric(
                         horizontal: double.infinity, vertical: 0.03 * height)),
-                gameProvider.data['player_turn'] ==
-                        gameProvider.data['players'][widget.playername]['order']
+                (gameProvider.data['player_turn'] ==
+                        gameProvider.data['players'][widget.playername]['order']) && !(gameProvider.compulsoryChallenge)
                     ? Expanded(
                         child: Row(children: [
                           Expanded(
@@ -207,7 +207,7 @@ class _GameState extends State<Game> {
                 gameProvider.data['message'] != "5 second break"
                     ? Column(
                         children: [
-                          gameProvider.data['player_turn'] == gameProvider.data['players'][widget.playername]['order'] ? Container(
+                          (gameProvider.data['player_turn'] == gameProvider.data['players'][widget.playername]['order']) && !(gameProvider.compulsoryChallenge) ? Container(
                             decoration: BoxDecoration(
                                 gradient: const LinearGradient(
                                   colors: [Colors.orange, Colors.yellow],

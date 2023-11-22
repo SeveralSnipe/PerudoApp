@@ -1,6 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:perudo/victory.dart';
 
 import 'utils.dart';
 import 'lobby.dart';
@@ -30,6 +31,7 @@ class _HomeState extends State<Home> {
         'd3': '',
         'd4': '',
         'd5': '',
+        'palefico_done': false,
         'status': 'alive'
       },
       },
@@ -57,6 +59,7 @@ class _HomeState extends State<Home> {
           'd3': '',
           'd4': '',
           'd5': '',
+          'palefico_done': false,
           'status': 'alive'
       };
       final Map<String, dynamic> updates = {};
@@ -119,6 +122,22 @@ class _HomeState extends State<Home> {
             ),
             child: Text(
               "Join Lobby",
+              style: GoogleFonts.aleo(
+                color: Colors.black87,
+                fontSize: 16,
+              ),
+            ),
+          ),
+          const Padding(padding: EdgeInsets.all(5)),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => Victory()));
+            },
+            style: ButtonStyle(
+              backgroundColor: MaterialStatePropertyAll(Colors.red.shade300),
+            ),
+            child: Text(
+              "Test Victory",
               style: GoogleFonts.aleo(
                 color: Colors.black87,
                 fontSize: 16,

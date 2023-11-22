@@ -41,6 +41,7 @@ dependencies:
   provider: 
   circular_countdown_timer: 
   carousel_slider: ^4.2.1
+  confetti: 
 
 dev_dependencies:
   flutter_test:

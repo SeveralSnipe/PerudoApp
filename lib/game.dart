@@ -65,26 +65,37 @@ class _GameState extends State<Game> {
                       for (var player in gameProvider.data['players'].keys) {
                         if (gameProvider.data['players'][player]['order'] ==
                             index + 1) {
-                          return Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  '$player',
-                                  style: GoogleFonts.aleo(
-                                      color: player == widget.playername
-                                          ? Colors.blue
-                                          : Colors.black,
-                                      fontSize: 16),
-                                ),
-                                const Text('')
-                              ]);
+                          return Container(
+                            decoration: (gameProvider.data['player_turn'] ==
+                        gameProvider.data['players'][player]['order']) ? const BoxDecoration(backgroundBlendMode: BlendMode.darken, gradient: RadialGradient(colors: [Colors.green, Colors.white])) : null,
+                            child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    '$player',
+                                    style: GoogleFonts.aleo(
+                                        color: player == widget.playername
+                                            ? Colors.blue
+                                            : Colors.black,
+                                        fontSize: 16),
+                                  ),
+                                  Text(
+                                    'Dice: ${gameProvider.data['players'][player]['dice_count']}',
+                                    style: GoogleFonts.aleo(
+                                        color: player == widget.playername
+                                            ? Colors.blue
+                                            : Colors.black,
+                                        fontSize: 16),
+                                  )
+                                ]),
+                          );
                         }
                       }
                     },
                     separatorBuilder: (context, index) {
                       return const SizedBox(
                         width: 7,
-                        height: 1,
+                        height: 2,
                       );
                     },
                   ),
@@ -94,6 +105,7 @@ class _GameState extends State<Game> {
                         horizontal: double.infinity, vertical: 0.03 * height)),
                 Text(
                   gameProvider.data['message'],
+                  textAlign: TextAlign.center,
                   style: GoogleFonts.aleo(
                     color: Colors.black87,
                     fontSize: 20,
@@ -103,7 +115,7 @@ class _GameState extends State<Game> {
                     padding: EdgeInsets.symmetric(
                         horizontal: double.infinity, vertical: 0.03 * height)),
                 (gameProvider.data['player_turn'] ==
-                        gameProvider.data['players'][widget.playername]['order']) && !(gameProvider.compulsoryChallenge)
+                        gameProvider.data['players'][widget.playername]['order']) && !(gameProvider.compulsoryChallenge) && !(gameProvider.data['break'])
                     ? Expanded(
                         child: Row(children: [
                           Expanded(
@@ -204,7 +216,7 @@ class _GameState extends State<Game> {
                 Padding(
                     padding: EdgeInsets.symmetric(
                         horizontal: double.infinity, vertical: 0.02 * height)),
-                gameProvider.data['message'] != "5 second break"
+                !(gameProvider.data['break'])
                     ? Column(
                         children: [
                           (gameProvider.data['player_turn'] == gameProvider.data['players'][widget.playername]['order']) && !(gameProvider.compulsoryChallenge) ? Container(
@@ -243,7 +255,7 @@ class _GameState extends State<Game> {
                                 ),
                                 borderRadius: BorderRadius.circular(30.0)),
                             child: ElevatedButton(
-                              onPressed: () {},
+                              onPressed: gameProvider.challenge,
                               style: ElevatedButton.styleFrom(
                                   shape: const StadiumBorder(),
                                   backgroundColor: Colors.transparent,
@@ -286,7 +298,7 @@ class _GameState extends State<Game> {
                           ) : const SizedBox.shrink(),
                         ],
                       )
-                    : const Padding(padding: EdgeInsets.all(0)),
+                    : const SizedBox.shrink(),
                 Expanded(
                   child: Padding(
                       padding: EdgeInsets.symmetric(

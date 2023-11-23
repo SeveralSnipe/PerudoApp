@@ -5,7 +5,6 @@ import 'package:perudo/game.dart';
 import 'package:perudo/models.dart';
 import 'package:provider/provider.dart';
 
-import 'utils.dart';
 
 class Lobby extends StatefulWidget {
   final String lobbyCode;

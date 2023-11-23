@@ -7,7 +7,7 @@ import 'utils.dart';
 import 'lobby.dart';
 
 class Home extends StatefulWidget {
-  Home({super.key});
+  const Home({super.key});
 
   @override
   State<Home> createState() => _HomeState();
@@ -18,6 +18,12 @@ class _HomeState extends State<Home> {
 
   TextEditingController userController =TextEditingController();
 
+  @override
+  void dispose() {
+    roomController.dispose();
+    userController.dispose();
+    super.dispose();
+  }
   // This widget is the root of your application.
   void roomCreator(String inpString) async{
     FirebaseDatabase database = FirebaseDatabase(databaseURL: "https://perudo-flutter-default-rtdb.asia-southeast1.firebasedatabase.app/" );
@@ -131,7 +137,7 @@ class _HomeState extends State<Home> {
           const Padding(padding: EdgeInsets.all(5)),
           ElevatedButton(
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => Victory()));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const Victory()));
             },
             style: ButtonStyle(
               backgroundColor: MaterialStatePropertyAll(Colors.red.shade300),

@@ -1,12 +1,8 @@
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:perudo/home.dart';
 import 'firebase_options.dart';
-import 'dart:math';
-import 'utils.dart';
 
 // databaseURL: "https://perudo-flutter-default-rtdb.asia-southeast1.firebasedatabase.app/"
 void main() async {
@@ -41,6 +37,6 @@ class _MyAppState extends State<MyApp> {
                 end: Alignment.bottomRight,
               ),
             ),
-            child: Home()));
+            child: const Home()));
   }
 }

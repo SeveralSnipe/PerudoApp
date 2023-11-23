@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
@@ -219,6 +218,7 @@ class GameProvider extends ChangeNotifier {
     if (data['seconds_flag']) {
       updates = restartTimer(data['message'], false);
       updates['/break'] = false;
+      updates.addAll(rollDice());
     } else {
       String currentPlayer = '';
       for (var player in data['players'].keys){
@@ -245,7 +245,6 @@ class GameProvider extends ChangeNotifier {
           }
         }
       }
-      // implement player inactive kick
     }
     await databaseReference.update(updates);
   }
@@ -311,8 +310,7 @@ class GameProvider extends ChangeNotifier {
     if (data['first_turn']) {
       updates['/first_turn'] = false;
     }
-    // When eliminating player, change player turn logic
-    updates['/player_turn'] = (data['player_turn'] % data['count']) + 1;
+    updates['/player_turn'] = (data['player_turn'] % data['alive_count']) + 1;
     await databaseReference.update(updates);
   }
 
@@ -323,12 +321,13 @@ class GameProvider extends ChangeNotifier {
     for (var player in data['players'].keys) {
       if (data['players'][player]['status']=='alive') {
         for (var i = 1; i < data['players'][player]['dice_count'] + 1; i++) {
-          if ((data['players'][player]['d$i'] == data['current_face']) || ((data['players'][player]['d$i'] == 1) && data['palefico'])) {
+          if ((data['players'][player]['d$i'] == data['current_face']) || ((data['players'][player]['d$i'] == 1) && !data['palefico'])) {
             diceCount++;
           }
         }
       }
     }
+    print(diceCount);
     if (diceCount>=data['current_number']) {
       for (var player in data['players'].keys) {
           if (data['players'][player]['order'] == data['player_turn']) {
@@ -411,6 +410,61 @@ class GameProvider extends ChangeNotifier {
     }
     updates['/first_turn'] = true;
     await databaseReference.update(updates);
+    timercontroller.restart(duration: 5);
+  }
+
+  Future<void> calza() async{
+    Map<String, dynamic> updates = {};
+    compulsoryChallenge = false;
+    int diceCount = 0;
+    for (var player in data['players'].keys) {
+      if (data['players'][player]['status']=='alive') {
+        for (var i = 1; i < data['players'][player]['dice_count'] + 1; i++) {
+          if ((data['players'][player]['d$i'] == data['current_face']) || ((data['players'][player]['d$i'] == 1) && !data['palefico'])) {
+            diceCount++;
+          }
+        }
+      }
+    }
+
+    if (diceCount == data['current_number']) {
+      updates = restartTimer('$player called Calza and won, they get a dice back.', false);
+      updates['/total_dice'] = data['total_dice']+1;
+      updates['/player_turn'] = data['players'][player]['order'];
+      updates['/players/$player/dice_count'] = data['players'][player]['dice_count'] + 1;
+    }
+    else{
+      updates = restartTimer('$player called Calza and lost, they lose a dice.', false);
+      updates['/total_dice'] = data['total_dice'] - 1;
+      updates['/players/$player/dice_count'] = data['players'][player]['dice_count'] - 1;
+      updates['/player_turn'] = data['players'][player]['order'];
+      if (data['players'][player]['dice_count'] == 2 && !data['players'][player]['palefico_done']) {
+        updates['/palefico'] = true;
+        updates['/players/$player/palefico_done'] = true;
+        updates['/message'] = '$player called Calza and lost, they lose a dice. Their palefico begins!';
+      }
+      if (data['players'][player]['dice_count'] == 1) {
+        updates['/message'] = '$player called Calza and lost, hence losing their last dice.';
+        updates['/players/$player/status'] = 'eliminated';
+        updates['/alive_count'] = data['alive_count'] - 1;
+        updates['/current_face'] = 0;
+        updates['/current_number'] = 0;
+        updates['/players/$player/order'] = -1;
+        if (data['player_turn']==data['alive_count']) {
+          updates['/player_turn'] = 1;
+        } else{
+          for (var player2 in data['players'].keys){
+            if (data['players'][player2]['status']=='alive' && data['players'][player2]['order']>data['players'][player2]['order']) {
+              updates['/players/$player2/order'] = data['players'][player2]['order'] - 1;
+            }
+          }
+        }
+      }
+    }
+
+    updates['/first_turn'] = true;
+    await databaseReference.update(updates);
+    timercontroller.restart(duration: 5);
   }
 
   Map<String, dynamic> restartTimer(String message, bool type) {

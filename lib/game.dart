@@ -1,4 +1,3 @@
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:perudo/models.dart';
@@ -6,7 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
-import 'utils.dart';
 
 const Map<int, String> dices = {
   1: "assets/images/dice-six-faces-one.png",
@@ -67,7 +65,8 @@ class _GameState extends State<Game> {
                             index + 1) {
                           return Container(
                             decoration: (gameProvider.data['player_turn'] ==
-                        gameProvider.data['players'][player]['order']) ? const BoxDecoration(backgroundBlendMode: BlendMode.darken, gradient: RadialGradient(colors: [Colors.green, Colors.white])) : null,
+                        gameProvider.data['players'][player]['order']) ? const BoxDecoration(image: DecorationImage(image: AssetImage('assets/images/rolling-dice-cup.png'), scale: 10, fit: BoxFit.contain,)) : null,
+                        // BoxDecoration(backgroundBlendMode: BlendMode.darken, gradient: RadialGradient(colors: [Colors.green, Colors.white]))
                             child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
@@ -91,6 +90,7 @@ class _GameState extends State<Game> {
                           );
                         }
                       }
+                      return null;
                     },
                     separatorBuilder: (context, index) {
                       return const SizedBox(
@@ -103,12 +103,15 @@ class _GameState extends State<Game> {
                 Padding(
                     padding: EdgeInsets.symmetric(
                         horizontal: double.infinity, vertical: 0.03 * height)),
-                Text(
-                  gameProvider.data['message'],
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.aleo(
-                    color: Colors.black87,
-                    fontSize: 20,
+                Padding(
+                  padding: const EdgeInsets.only(left: 10, right: 10),
+                  child: Text(
+                    gameProvider.data['message'],
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.aleo(
+                      color: Colors.black87,
+                      fontSize: 20,
+                    ),
                   ),
                 ),
                 Padding(
@@ -118,42 +121,6 @@ class _GameState extends State<Game> {
                         gameProvider.data['players'][widget.playername]['order']) && !(gameProvider.compulsoryChallenge) && !(gameProvider.data['break'])
                     ? Expanded(
                         child: Row(children: [
-                          Expanded(
-                            child: CarouselSlider(
-                                  carouselController:
-                                      gameProvider.faceController,
-                                  options: CarouselOptions(
-                                    height: 0.1 * height,
-                                    scrollDirection: Axis.vertical,
-                                    enlargeCenterPage: true,
-                                    enlargeFactor: 0.5,
-                                    viewportFraction: 0.7,
-                                    enableInfiniteScroll: false,
-                                    scrollPhysics:
-                                        const BouncingScrollPhysics(),
-                                    onPageChanged: (index, reason) {
-                                      gameProvider.changedFace(index);
-                                    },
-                                  ),
-                                  items: gameProvider.faces.map((i) {
-                                    return Builder(
-                                      builder: (BuildContext context) {
-                                        return Container(
-                                            alignment: Alignment.center,
-                                            width: 0.2 * width,
-                                            margin: const EdgeInsets.symmetric(
-                                                horizontal: 5.0),
-                                            child: Text(
-                                              '$i',
-                                              style:
-                                                  const TextStyle(fontSize: 23),
-                                            ));
-                                      },
-                                    );
-                                  }).toList(),
-                                )),
-                              
-                            
                           Expanded(
                             child: CarouselSlider(
                                   carouselController:
@@ -189,6 +156,42 @@ class _GameState extends State<Game> {
                                   }).toList(),
                                 )
                             ),
+                              
+                            
+                          Expanded(
+                            child: CarouselSlider(
+                                  carouselController:
+                                      gameProvider.faceController,
+                                  options: CarouselOptions(
+                                    height: 0.1 * height,
+                                    scrollDirection: Axis.vertical,
+                                    enlargeCenterPage: true,
+                                    enlargeFactor: 0.5,
+                                    viewportFraction: 0.7,
+                                    enableInfiniteScroll: false,
+                                    scrollPhysics:
+                                        const BouncingScrollPhysics(),
+                                    onPageChanged: (index, reason) {
+                                      gameProvider.changedFace(index);
+                                    },
+                                  ),
+                                  items: gameProvider.faces.map((i) {
+                                    return Builder(
+                                      builder: (BuildContext context) {
+                                        return Container(
+                                            alignment: Alignment.center,
+                                            width: 0.2 * width,
+                                            margin: const EdgeInsets.symmetric(
+                                                horizontal: 5.0),
+                                            child: Text(
+                                              '$i',
+                                              style:
+                                                  const TextStyle(fontSize: 23),
+                                            ));
+                                      },
+                                    );
+                                  }).toList(),
+                                )),
                           
                         ]),
                       )
@@ -273,7 +276,7 @@ class _GameState extends State<Game> {
                               padding: EdgeInsets.symmetric(
                                   horizontal: double.infinity,
                                   vertical: 0.01 * height)),
-                          (gameProvider.data['player_turn'] != gameProvider.data['players'][widget.playername]['order']) && (gameProvider.data['alive_count']) > 2 ? Container(
+                          (gameProvider.data['player_turn'] != gameProvider.data['players'][widget.playername]['order']) && ((gameProvider.data['alive_count']) > 2) && (!gameProvider.data['palefico']) && (gameProvider.data['players'][widget.playername]['dice_count']!=5 && gameProvider.data['players'][widget.playername]['dice_count']!=0) && ((gameProvider.data['players'][widget.playername]['order']+1)%gameProvider.data['alive_count']!=gameProvider.data['player_turn']%gameProvider.data['alive_count']) ? Container(
                             decoration: BoxDecoration(
                                 gradient: const LinearGradient(
                                   colors: [Colors.blue, Colors.blueGrey],
@@ -282,7 +285,7 @@ class _GameState extends State<Game> {
                                 ),
                                 borderRadius: BorderRadius.circular(30.0)),
                             child: ElevatedButton(
-                              onPressed: () {},
+                              onPressed: gameProvider.calza,
                               style: ElevatedButton.styleFrom(
                                   shape: const StadiumBorder(),
                                   backgroundColor: Colors.transparent,

@@ -61,7 +61,7 @@ Widget showPage(BuildContext context, String code, String player, String leader,
                   lobbyCode: code,
                   playername: player,
                   leadername: leader,
-                  initData: myDatabaseProvider.gameData), type: PageTransitionType.rightToLeft, duration: const Duration(milliseconds: 300)) );});
+                  initData: myDatabaseProvider.gameData), type: PageTransitionType.rightToLeft, duration: const Duration(milliseconds: 700)) );});
   }
   return Container(
                   alignment: Alignment.center,

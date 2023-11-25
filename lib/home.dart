@@ -1,4 +1,4 @@
-import 'package:audioplayers/audioplayers.dart';
+// import 'package:audioplayers/audioplayers.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -49,7 +49,7 @@ class _HomeState extends State<Home> {
     var roomName = generateRandomString(6);
     var roomRef= ref.child(roomName);
     roomRef.set(data);
-    if (context.mounted) Navigator.push(context, PageTransition(child: Lobby(lobbyCode: roomName, leadername: inpString, playername: inpString,), type: PageTransitionType.rightToLeft, duration: const Duration(milliseconds: 300),));
+    if (context.mounted) Navigator.push(context, PageTransition(child: Lobby(lobbyCode: roomName, leadername: inpString, playername: inpString,), type: PageTransitionType.rightToLeft, duration: const Duration(milliseconds: 700),));
   }
 
   void roomGetter(String room, String name) async{
@@ -76,7 +76,7 @@ class _HomeState extends State<Home> {
       // var leader = await ref.child(room).child('player1').get();
       // Map <dynamic, dynamic> leadermap = leader.value as Map<dynamic, dynamic>;
       // print(leadermap['player1']);
-      if (context.mounted) Navigator.push(context, PageTransition(child: Lobby(lobbyCode: room, leadername: values['leader'], playername: name,), type: PageTransitionType.rightToLeft, duration: const Duration(milliseconds: 300)));
+      if (context.mounted) Navigator.push(context, PageTransition(child: Lobby(lobbyCode: room, leadername: values['leader'], playername: name,), type: PageTransitionType.rightToLeft, duration: const Duration(milliseconds: 700)));
       
     }
     else{
@@ -107,7 +107,7 @@ class _HomeState extends State<Home> {
           const Padding(padding: EdgeInsets.all(50)),
           ElevatedButton(
             onPressed: () {
-              AudioPlayer().play(AssetSource('assets/audio/my_audio.mp3'));
+              //AudioPlayer().play(AssetSource('assets/audio/my_audio.mp3'));
               popUpCreate(context);
             },
             style: ButtonStyle(

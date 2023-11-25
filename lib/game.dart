@@ -49,7 +49,7 @@ class _GameState extends State<Game> {
 
 Widget goToVictory(BuildContext context, GameProvider gameProvider, String lobbyCode, String leadername, String playername, double height, double width){
   if(gameProvider.victoryMessage!=''){
-    WidgetsBinding.instance.addPostFrameCallback((_) {Navigator.pushReplacement(context, PageTransition(child: Victory(winnerMessage: gameProvider.victoryMessage), type: PageTransitionType.rightToLeft));});
+    WidgetsBinding.instance.addPostFrameCallback((_) {Navigator.pushReplacement(context, PageTransition(child: Victory(winnerMessage: gameProvider.victoryMessage), type: PageTransitionType.rightToLeft, duration: const Duration(milliseconds: 700)));});
   }
   return Container(
                   decoration: const BoxDecoration(

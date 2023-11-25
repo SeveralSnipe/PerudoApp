@@ -1,7 +1,8 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:perudo/victory.dart';
+import 'package:page_transition/page_transition.dart';
 
 import 'utils.dart';
 import 'lobby.dart';
@@ -48,7 +49,7 @@ class _HomeState extends State<Home> {
     var roomName = generateRandomString(6);
     var roomRef= ref.child(roomName);
     roomRef.set(data);
-    if (context.mounted) Navigator.push(context, MaterialPageRoute(builder: (context) => Lobby(lobbyCode: roomName, leadername: inpString, playername: inpString,)));
+    if (context.mounted) Navigator.push(context, PageTransition(child: Lobby(lobbyCode: roomName, leadername: inpString, playername: inpString,), type: PageTransitionType.rightToLeft, duration: const Duration(milliseconds: 300),));
   }
 
   void roomGetter(String room, String name) async{
@@ -75,7 +76,8 @@ class _HomeState extends State<Home> {
       // var leader = await ref.child(room).child('player1').get();
       // Map <dynamic, dynamic> leadermap = leader.value as Map<dynamic, dynamic>;
       // print(leadermap['player1']);
-      if (context.mounted) Navigator.push(context, MaterialPageRoute(builder: (context) => Lobby(lobbyCode: room, leadername: values['leader'], playername: name,)));
+      if (context.mounted) Navigator.push(context, PageTransition(child: Lobby(lobbyCode: room, leadername: values['leader'], playername: name,), type: PageTransitionType.rightToLeft, duration: const Duration(milliseconds: 300)));
+      
     }
     else{
       alert(context, 'Lobby is full');
@@ -105,6 +107,7 @@ class _HomeState extends State<Home> {
           const Padding(padding: EdgeInsets.all(50)),
           ElevatedButton(
             onPressed: () {
+              AudioPlayer().play(AssetSource('assets/audio/my_audio.mp3'));
               popUpCreate(context);
             },
             style: ButtonStyle(
@@ -137,13 +140,13 @@ class _HomeState extends State<Home> {
           const Padding(padding: EdgeInsets.all(5)),
           ElevatedButton(
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => const Victory()));
+              popUpInfo(context);
             },
             style: ButtonStyle(
               backgroundColor: MaterialStatePropertyAll(Colors.red.shade300),
             ),
             child: Text(
-              "Test Victory",
+              "How to Play",
               style: GoogleFonts.aleo(
                 color: Colors.black87,
                 fontSize: 16,
@@ -184,6 +187,7 @@ class _HomeState extends State<Home> {
               actions: [
                 ElevatedButton(
                   onPressed: () async {
+                    Navigator.pop(context);
                     var username = roomController.text;
                     roomCreator(username);
                     setState(() {});
@@ -249,6 +253,7 @@ class _HomeState extends State<Home> {
               actions: [
                 ElevatedButton(
                   onPressed: () async {
+                    Navigator.pop(context);
                     var roomName = roomController.text;
                     var userName = userController.text;
                     roomGetter(roomName, userName);
@@ -274,3 +279,58 @@ class _HomeState extends State<Home> {
     );
   }
 }
+
+
+Future popUpInfo(BuildContext context){
+  return showDialog(
+    context: context, 
+    builder: (BuildContext context){
+      return Center(
+        child: ListView(shrinkWrap: true, children: [
+          AlertDialog(
+            content: Column(
+              children:[
+                easyText('OBJECTIVE', true),
+                easyText('Be the last player with dice.', false),
+                easyText('GENERAL', true),
+                easyText('Each player begins with 5 dice.', false),
+                easyText('On your turn, you must bet on a face value and the number of those dice.', false),
+                easyText('You can bet any face value, but the number should always be higher than the previous bet.', false),
+                easyText('If you feel like the previous bet is false, you can challenge it. Whoever loses the challenge loses a dice and starts the next round.', false),
+                easyText('ONES', true),
+                easyText('Ones are considered wilds.', false),
+                easyText('To bet on the number of ones, there are a few special rules.', false),
+                easyText('If changing face value TO one, then you must halve the numeric value (rounded up).', false),
+                easyText('For example, to convert a bet of 7 5s to ones, the minimum ones bet will be 4 1s.', false),
+                easyText('To change face value FROM one, the number should be atleast 2 times + 1.', false),
+                easyText('For example, to convert 3 1s to any other number, the minimum bet can be 7 5s.', false),
+                easyText('PALEFICO', true),
+                easyText('When a player reaches their last dice, they start a round of palefico.', false),
+                easyText('Each player can start palefico only once per game.', false),
+                easyText('During palefico, ones are not wild and the initial face value CANNOT be changed by anyone.', false),
+                easyText('CALZA', true),
+                easyText('During a round, any player apart from the current and previous player can call calza.', false),
+                easyText('When calza is called, the round ends and dice are counted.', false),
+                easyText('If the current bet is EXACTLY correct, then the player who called calza gains back a dice.', false),
+                easyText('Otherwise, they lose a dice.', false),
+                easyText('Either way, they start the next round of betting.', false)
+              ]
+            ),
+          )
+        ],)
+          );
+});
+    }
+
+Widget easyText(String message, bool heading){
+  return Text(
+                    message,
+                    textAlign: TextAlign.left,
+                    style: GoogleFonts.aleo(
+                      color: Colors.black87,
+                      fontSize: heading ? 26 : 20,
+                      textStyle: TextStyle(fontWeight: heading? FontWeight.bold : FontWeight.normal)
+                    ),
+                  );
+}
+    

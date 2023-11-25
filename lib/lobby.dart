@@ -1,6 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:perudo/game.dart';
 import 'package:perudo/models.dart';
 import 'package:provider/provider.dart';
@@ -49,13 +50,20 @@ class _LobbyState extends State<Lobby> {
         create: (context) => LobbyProvider(widget.lobbyCode, widget.leadername),
         child: Scaffold(body: Consumer<LobbyProvider>(
             builder: (context, myDatabaseProvider, child) {
-          return myDatabaseProvider.started
-              ? Game(
-                  lobbyCode: widget.lobbyCode,
-                  playername: widget.playername,
-                  leadername: widget.playername,
-                  initData: myDatabaseProvider.gameData)
-              : Container(
+          return showPage(context, widget.lobbyCode, widget.playername, widget.leadername, myDatabaseProvider);
+        })));
+  }
+}
+
+Widget showPage(BuildContext context, String code, String player, String leader, LobbyProvider myDatabaseProvider){
+  if(myDatabaseProvider.started){
+    WidgetsBinding.instance.addPostFrameCallback((_) {Navigator.pushReplacement(context, PageTransition(child: Game(
+                  lobbyCode: code,
+                  playername: player,
+                  leadername: leader,
+                  initData: myDatabaseProvider.gameData), type: PageTransitionType.rightToLeft, duration: const Duration(milliseconds: 300)) );});
+  }
+  return Container(
                   alignment: Alignment.center,
                   decoration: const BoxDecoration(
                     gradient: LinearGradient(
@@ -84,14 +92,14 @@ class _LobbyState extends State<Lobby> {
                               child: Text(
                             key == 1 ? '♚ $value' : '$value',
                             style: TextStyle(
-                                fontWeight: value == widget.playername
+                                fontWeight: value == player
                                     ? FontWeight.bold
                                     : FontWeight.normal,
                                 fontSize: 16),
                           ));
                         },
                       ),
-                      widget.leadername == widget.playername
+                      leader == player
                           ? ElevatedButton(
                               onPressed: myDatabaseProvider.count > 1
                                   ? () {
@@ -115,13 +123,11 @@ class _LobbyState extends State<Lobby> {
                             )
                           : const Padding(padding: EdgeInsets.all(0)),
                       const Padding(padding: EdgeInsets.all(20)),
-                      Text('Code: ${widget.lobbyCode}',
+                      Text('Code: $code',
                           style: GoogleFonts.aleo(
                             color: Colors.black87,
                             fontSize: 16,
                           )),
                     ],
                   ));
-        })));
-  }
 }

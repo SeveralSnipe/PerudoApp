@@ -84,9 +84,9 @@ class LobbyProvider extends ChangeNotifier {
     await databaseReference.update(updates);
     // await databaseReference.child('/player_turn').set(1);
     // await databaseReference.child('/flag').set(true);
-    started = true;
-    gameData = playersRef.value as Map<dynamic, dynamic>;
-    notifyListeners();
+    // started = true;
+    // gameData = playersRef.value as Map<dynamic, dynamic>;
+    // notifyListeners();
   }
 }
 
@@ -105,6 +105,7 @@ class GameProvider extends ChangeNotifier {
   int centerFace = 2;
   int centerNumber = 1;
   bool compulsoryChallenge = false;
+  String victoryMessage = '';
   // late Map<int, String> playerOrder;
   // IMPLEMENT CALZA, VICTORY, HOW TO PLAY
 
@@ -116,6 +117,7 @@ class GameProvider extends ChangeNotifier {
     for (var i = 0; i < data['total_dice']; i++) {
       numbers.add(i + 1);
     }
+    print('entered here 3');
     databaseReference.onValue.listen((event) {
       compulsoryChallenge = false;
       if (event.snapshot.value != null) {
@@ -199,6 +201,13 @@ class GameProvider extends ChangeNotifier {
           }
           else{
             timercontroller.restart(duration: 60);
+          }
+        }
+      }
+      if (data['alive_count']==1) {
+        for (var player in data['players'].keys) {
+          if (data['players'][player]['status']=='alive') {
+            victoryMessage = '$player has won the game with ${data['players'][player]['dice_count']} dice left!';
           }
         }
       }
@@ -327,7 +336,6 @@ class GameProvider extends ChangeNotifier {
         }
       }
     }
-    print(diceCount);
     if (diceCount>=data['current_number']) {
       for (var player in data['players'].keys) {
           if (data['players'][player]['order'] == data['player_turn']) {

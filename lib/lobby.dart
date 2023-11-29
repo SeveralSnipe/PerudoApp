@@ -35,6 +35,7 @@ class _LobbyState extends State<Lobby> {
       if (widget.leadername != widget.playername && values['status']=="filling") {
         final Map<String, dynamic> updates = {};
         updates['/count'] = values['count'] - 1;
+        updates['/last_touched'] = DateTime.now().toString();
         await databaseReference.update(updates);
         await databaseReference.child('/players/${widget.playername}').remove();
       } else if(values['status']=="filling"){

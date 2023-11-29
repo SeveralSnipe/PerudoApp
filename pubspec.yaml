@@ -43,6 +43,9 @@ dependencies:
   carousel_slider: ^4.2.1
   confetti: 
   page_transition: ^2.1.0
+  flutter_native_splash: ^2.3.6
+  audioplayers: ^5.2.1
+  flutter_launcher_icons: ^0.13.1
 
 dev_dependencies:
   flutter_test:
@@ -55,6 +58,21 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
 
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/icons8-dice-50.png"
+  min_sdk_android: 21 # android min sdk min:16, default 21
+  web:
+    generate: true
+    image_path: "assets/images/icons8-dice-50.png"
+  windows:
+    generate: true
+    image_path: "assets/images/icons8-dice-50.png"
+    icon_size: 48 # min:48, max:256, default: 48
+  macos:
+    generate: true
+    image_path: "assets/images/icons8-dice-50.png"
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
@@ -67,6 +85,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/
+    - assets/audio/
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg

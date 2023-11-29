@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:confetti/confetti.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -20,6 +21,12 @@ class _VictoryState extends State<Victory> {
     super.initState();
     _confcontroller = ConfettiController(duration: const Duration(seconds: 10));
     _confcontroller.play();
+  }
+
+  @override
+  void dispose() {
+    _confcontroller.dispose();
+    super.dispose();
   }
 
   @override
@@ -79,7 +86,8 @@ class _VictoryState extends State<Victory> {
               ),
               const Padding(padding: EdgeInsets.all(8)),
               ElevatedButton(
-                  onPressed: ()  {
+                  onPressed: () async {
+                    AudioPlayer().play(AssetSource('audio/shooting-sound-fx-159024.mp3'), mode: PlayerMode.lowLatency);
                     Navigator.pop(context);
                   },
                   style: ButtonStyle(

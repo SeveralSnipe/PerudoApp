@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:page_transition/page_transition.dart';
@@ -297,7 +298,10 @@ Widget goToVictory(BuildContext context, GameProvider gameProvider, String lobby
                                             borderRadius:
                                                 BorderRadius.circular(30.0)),
                                         child: ElevatedButton(
-                                          onPressed: gameProvider.placeBet,
+                                          onPressed: () async {
+                                            AudioPlayer().play(AssetSource('audio/shooting-sound-fx-159024.mp3'), mode: PlayerMode.lowLatency);
+                                            gameProvider.placeBet();
+                                          },
                                           style: ElevatedButton.styleFrom(
                                               shape: const StadiumBorder(),
                                               backgroundColor:
@@ -334,7 +338,10 @@ Widget goToVictory(BuildContext context, GameProvider gameProvider, String lobby
                                             borderRadius:
                                                 BorderRadius.circular(30.0)),
                                         child: ElevatedButton(
-                                          onPressed: gameProvider.challenge,
+                                          onPressed: () async {
+                                            AudioPlayer().play(AssetSource('audio/shooting-sound-fx-159024.mp3'), mode: PlayerMode.lowLatency);
+                                            gameProvider.challenge();
+                                          },
                                           style: ElevatedButton.styleFrom(
                                               shape: const StadiumBorder(),
                                               backgroundColor:
@@ -386,7 +393,10 @@ Widget goToVictory(BuildContext context, GameProvider gameProvider, String lobby
                                             borderRadius:
                                                 BorderRadius.circular(30.0)),
                                         child: ElevatedButton(
-                                          onPressed: gameProvider.calza,
+                                          onPressed: () async {
+                                            AudioPlayer().play(AssetSource('audio/shooting-sound-fx-159024.mp3'), mode: PlayerMode.lowLatency);
+                                            gameProvider.calza();
+                                          },
                                           style: ElevatedButton.styleFrom(
                                               shape: const StadiumBorder(),
                                               backgroundColor:

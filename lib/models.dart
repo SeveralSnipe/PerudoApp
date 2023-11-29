@@ -81,6 +81,7 @@ class LobbyProvider extends ChangeNotifier {
     updates['/palefico'] = false;
     updates['/message'] = 'First turn of the game';
     updates['/break'] = false;
+    updates['/last_touched'] = DateTime.now().toString();
     await databaseReference.update(updates);
     // await databaseReference.child('/player_turn').set(1);
     // await databaseReference.child('/flag').set(true);
@@ -117,7 +118,6 @@ class GameProvider extends ChangeNotifier {
     for (var i = 0; i < data['total_dice']; i++) {
       numbers.add(i + 1);
     }
-    print('entered here 3');
     databaseReference.onValue.listen((event) {
       compulsoryChallenge = false;
       if (event.snapshot.value != null) {
@@ -138,8 +138,6 @@ class GameProvider extends ChangeNotifier {
               numbers.add(i + 1);
             }
             changedNumber(0);
-            // numberController.animateToPage(0);
-            // faceController.animateToPage(0);
           } else if (data['current_number'] == data['total_dice']) {
             if (data['current_face'] == 1 || data['palefico']) {
               compulsoryChallenge = true;
@@ -171,7 +169,7 @@ class GameProvider extends ChangeNotifier {
                   numbers.add(i + 1);
                 }
               } else {
-                for (var i = (data['current_number'] / 2).ceil();
+                for (var i = (data['current_number'] / 2).ceil() - 1;
                     i < data['total_dice'];
                     i++) {
                   numbers.add(i + 1);
@@ -215,12 +213,6 @@ class GameProvider extends ChangeNotifier {
     });
   }
 
-  Future<void> flipTimerFlag() async {
-    Map<String, dynamic> updates = {};
-    if (!data['flag'] && isLeader) updates = rollDice();
-    updates['/flag'] = !data['flag'];
-    await databaseReference.update(updates);
-  }
 
   Future<void> leaderTimerExpire() async {
     Map<String, dynamic> updates;
@@ -255,6 +247,7 @@ class GameProvider extends ChangeNotifier {
         }
       }
     }
+    updates['/last_touched'] = DateTime.now().toString();
     await databaseReference.update(updates);
   }
 
@@ -320,6 +313,7 @@ class GameProvider extends ChangeNotifier {
       updates['/first_turn'] = false;
     }
     updates['/player_turn'] = (data['player_turn'] % data['alive_count']) + 1;
+    updates['/last_touched'] = DateTime.now().toString();
     await databaseReference.update(updates);
   }
 
@@ -417,6 +411,7 @@ class GameProvider extends ChangeNotifier {
       }
     }
     updates['/first_turn'] = true;
+    updates['/last_touched'] = true;
     await databaseReference.update(updates);
     timercontroller.restart(duration: 5);
   }
@@ -471,6 +466,7 @@ class GameProvider extends ChangeNotifier {
     }
 
     updates['/first_turn'] = true;
+    updates['/last_touched'] = true;
     await databaseReference.update(updates);
     timercontroller.restart(duration: 5);
   }

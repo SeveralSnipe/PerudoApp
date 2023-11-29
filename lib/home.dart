@@ -1,4 +1,5 @@
 // import 'package:audioplayers/audioplayers.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -19,17 +20,52 @@ class _HomeState extends State<Home> {
 
   TextEditingController userController =TextEditingController();
 
+  final _formKey = GlobalKey<FormState>();
+
+  final _formKey2 = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    checkCleaned();
+  }
+
   @override
   void dispose() {
     roomController.dispose();
     userController.dispose();
     super.dispose();
   }
+
+  void checkCleaned() async{
+    FirebaseDatabase database = FirebaseDatabase(databaseURL: "https://perudo-flutter-default-rtdb.asia-southeast1.firebasedatabase.app/" );
+    DatabaseReference ref = database.ref('last_cleaned');
+    var lastCleanedRef = await ref.get();
+    if (lastCleanedRef.value!=null){
+      DateTime lastCleaned = DateTime.parse(lastCleanedRef.value as String);
+      if (DateTime.now().difference(lastCleaned).inDays > 0) {
+        ref = database.ref();
+        var roomValues = await ref.get();
+        if (roomValues.value!=null) {
+          Map<dynamic, dynamic> values = roomValues.value as Map<dynamic, dynamic>;
+          final Map<String, dynamic> updates = {};
+          for (var room in values['Rooms'].keys) {
+            if (room!='dummy' && DateTime.now().difference(DateTime.parse(values['Rooms'][room]['last_touched'])).inDays > 0) {
+              updates['/Rooms/$room'] = null;
+            }
+          }
+          updates['/last_cleaned'] = DateTime.now().toString();
+          await ref.update(updates);
+        }
+      }
+    }
+  }
   // This widget is the root of your application.
   void roomCreator(String inpString) async{
     FirebaseDatabase database = FirebaseDatabase(databaseURL: "https://perudo-flutter-default-rtdb.asia-southeast1.firebasedatabase.app/" );
     final DatabaseReference ref = database.ref("Rooms");
     Map<String, dynamic> data={
+      'last_touched': DateTime.now().toString(),
       'players':{
       inpString: {
         'dice_count': 5,
@@ -71,6 +107,7 @@ class _HomeState extends State<Home> {
       };
       final Map<String, dynamic> updates = {};
       updates['/$room/count'] = values['count']+1;
+      updates['/$room/last_touched'] = DateTime.now().toString();
       ref.update(updates);
       ref.child('/$room/players/$name').set(data);
       // var leader = await ref.child(room).child('player1').get();
@@ -107,7 +144,7 @@ class _HomeState extends State<Home> {
           const Padding(padding: EdgeInsets.all(50)),
           ElevatedButton(
             onPressed: () {
-              //AudioPlayer().play(AssetSource('assets/audio/my_audio.mp3'));
+              AudioPlayer().play(AssetSource('audio/shooting-sound-fx-159024.mp3'), mode: PlayerMode.lowLatency);
               popUpCreate(context);
             },
             style: ButtonStyle(
@@ -124,6 +161,7 @@ class _HomeState extends State<Home> {
           const Padding(padding: EdgeInsets.all(5)),
           ElevatedButton(
             onPressed: () {
+              AudioPlayer().play(AssetSource('audio/shooting-sound-fx-159024.mp3'), mode: PlayerMode.lowLatency);
               popUpJoin(context);
             },
             style: ButtonStyle(
@@ -140,6 +178,7 @@ class _HomeState extends State<Home> {
           const Padding(padding: EdgeInsets.all(5)),
           ElevatedButton(
             onPressed: () {
+              AudioPlayer().play(AssetSource('audio/shooting-sound-fx-159024.mp3'), mode: PlayerMode.lowLatency);
               popUpInfo(context);
             },
             style: ButtonStyle(
@@ -168,9 +207,19 @@ class _HomeState extends State<Home> {
               content: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Form(
+                  key: _formKey,
                   child: Column(
                     children: <Widget>[
                       TextFormField(
+                        validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter some text';
+              }
+              else if (value.contains(RegExp(r'[/.#$\[\]]'))){
+                return 'Name must not contain /, ., #, \$, [, or ]';
+              }
+              return null;
+            },
                         decoration: InputDecoration(
                           labelText: 'Your Name',
                           floatingLabelStyle: GoogleFonts.aleo(
@@ -187,10 +236,13 @@ class _HomeState extends State<Home> {
               actions: [
                 ElevatedButton(
                   onPressed: () async {
-                    Navigator.pop(context);
-                    var username = roomController.text;
-                    roomCreator(username);
-                    setState(() {});
+                    AudioPlayer().play(AssetSource('audio/shooting-sound-fx-159024.mp3'), mode: PlayerMode.lowLatency);
+                    if (_formKey.currentState!.validate()) {
+  Navigator.pop(context);
+  var username = roomController.text;
+  roomCreator(username);
+  setState(() {});
+}
                   },
                   style: ButtonStyle(
                     backgroundColor:
@@ -223,9 +275,16 @@ class _HomeState extends State<Home> {
               content: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Form(
+                  key: _formKey2,
                   child: Column(
                     children: <Widget>[
                       TextFormField(
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter some text';
+                          }
+                          return null;
+                        },
                         decoration: InputDecoration(
                           labelText: 'Room ID',
                           floatingLabelStyle: GoogleFonts.aleo(
@@ -237,6 +296,15 @@ class _HomeState extends State<Home> {
                       ),
                       const Padding(padding: EdgeInsets.all(20)),
                       TextFormField(
+                        validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter some text';
+              }
+              else if (value.contains(RegExp(r'[/.#$\[\]]'))){
+                return 'Name must not contain /, ., #, \$, [, or ]';
+              }
+              return null;
+            },
                         decoration: InputDecoration(
                           labelText: 'Username',
                           floatingLabelStyle: GoogleFonts.aleo(
@@ -253,11 +321,14 @@ class _HomeState extends State<Home> {
               actions: [
                 ElevatedButton(
                   onPressed: () async {
-                    Navigator.pop(context);
-                    var roomName = roomController.text;
-                    var userName = userController.text;
-                    roomGetter(roomName, userName);
-                    setState(() {});
+                    AudioPlayer().play(AssetSource('audio/shooting-sound-fx-159024.mp3'), mode: PlayerMode.lowLatency);
+                    if (_formKey2.currentState!.validate()) {
+  Navigator.pop(context);
+  var roomName = roomController.text;
+  var userName = userController.text;
+  roomGetter(roomName, userName);
+  setState(() {});
+}
                   },
                   style: ButtonStyle(
                     backgroundColor:

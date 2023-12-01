@@ -79,7 +79,7 @@ class _VictoryState extends State<Victory> {
                 widget.winnerMessage,
                 textAlign: TextAlign.center,
                 softWrap: true,
-                style: GoogleFonts.aleo(
+                style: GoogleFonts.josefinSans(
                   color: Colors.black87,
                   fontSize: 24,
                 ),
@@ -96,7 +96,7 @@ class _VictoryState extends State<Victory> {
                   ),
                   child: Text(
                     "Return to home",
-                    style: GoogleFonts.aleo(
+                    style: GoogleFonts.josefinSans(
                       color: Colors.black87,
                       fontSize: 16,
                     ),

@@ -96,7 +96,7 @@ Widget goToVictory(BuildContext context, GameProvider gameProvider, String lobby
                                       children: [
                                         Text(
                                           '$player',
-                                          style: GoogleFonts.aleo(
+                                          style: GoogleFonts.josefinSans(
                                               color: player == playername
                                                   ? Colors.blue
                                                   : Colors.black,
@@ -104,7 +104,7 @@ Widget goToVictory(BuildContext context, GameProvider gameProvider, String lobby
                                         ),
                                         Text(
                                           'Dice: ${gameProvider.data['players'][player]['dice_count']}',
-                                          style: GoogleFonts.aleo(
+                                          style: GoogleFonts.josefinSans(
                                               color: player == playername
                                                   ? Colors.blue
                                                   : Colors.black,
@@ -133,7 +133,7 @@ Widget goToVictory(BuildContext context, GameProvider gameProvider, String lobby
                         child: Text(
                           gameProvider.data['message'],
                           textAlign: TextAlign.center,
-                          style: GoogleFonts.aleo(
+                          style: GoogleFonts.josefinSans(
                             color: Colors.black87,
                             fontSize: 20,
                           ),
@@ -193,7 +193,7 @@ Widget goToVictory(BuildContext context, GameProvider gameProvider, String lobby
                                             vertical: 0.02 * height)),
                                     Text(
                                       "Number",
-                                      style: GoogleFonts.aleo(
+                                      style: GoogleFonts.josefinSans(
                                         color: Colors.black87,
                                         fontSize: 16,
                                       ),
@@ -243,7 +243,7 @@ Widget goToVictory(BuildContext context, GameProvider gameProvider, String lobby
                                             vertical: 0.02 * height)),
                                     Text(
                                       "Face",
-                                      style: GoogleFonts.aleo(
+                                      style: GoogleFonts.josefinSans(
                                         color: Colors.black87,
                                         fontSize: 16,
                                       ),

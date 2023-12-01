@@ -77,7 +77,7 @@ Widget showPage(BuildContext context, String code, String player, String leader,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text('Players',
-                          style: GoogleFonts.aleo(
+                          style: GoogleFonts.josefinSans(
                             color: Colors.black87,
                             fontSize: 20,
                           )),
@@ -116,7 +116,7 @@ Widget showPage(BuildContext context, String code, String player, String leader,
                               ),
                               child: Text(
                                 "Start Game",
-                                style: GoogleFonts.aleo(
+                                style: GoogleFonts.josefinSans(
                                   color: Colors.black87,
                                   fontSize: 16,
                                 ),
@@ -125,7 +125,7 @@ Widget showPage(BuildContext context, String code, String player, String leader,
                           : const Padding(padding: EdgeInsets.all(0)),
                       const Padding(padding: EdgeInsets.all(20)),
                       Text('Code: $code',
-                          style: GoogleFonts.aleo(
+                          style: GoogleFonts.josefinSans(
                             color: Colors.black87,
                             fontSize: 16,
                           )),

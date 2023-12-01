@@ -152,7 +152,7 @@ class _HomeState extends State<Home> {
             ),
             child: Text(
               "Create Lobby",
-              style: GoogleFonts.aleo(
+              style: GoogleFonts.josefinSans(
                 color: Colors.black87,
                 fontSize: 16,
               ),
@@ -169,7 +169,7 @@ class _HomeState extends State<Home> {
             ),
             child: Text(
               "Join Lobby",
-              style: GoogleFonts.aleo(
+              style: GoogleFonts.josefinSans(
                 color: Colors.black87,
                 fontSize: 16,
               ),
@@ -186,7 +186,7 @@ class _HomeState extends State<Home> {
             ),
             child: Text(
               "How to Play",
-              style: GoogleFonts.aleo(
+              style: GoogleFonts.josefinSans(
                 color: Colors.black87,
                 fontSize: 16,
               ),
@@ -222,7 +222,7 @@ class _HomeState extends State<Home> {
             },
                         decoration: InputDecoration(
                           labelText: 'Your Name',
-                          floatingLabelStyle: GoogleFonts.aleo(
+                          floatingLabelStyle: GoogleFonts.josefinSans(
                             color: Colors.black87,
                             fontSize: 16,
                           ),
@@ -250,7 +250,7 @@ class _HomeState extends State<Home> {
                   ),
                   child: Text(
                     "Submit",
-                    style: GoogleFonts.aleo(
+                    style: GoogleFonts.josefinSans(
                       color: Colors.black87,
                       fontSize: 16,
                     ),
@@ -287,7 +287,7 @@ class _HomeState extends State<Home> {
                         },
                         decoration: InputDecoration(
                           labelText: 'Room ID',
-                          floatingLabelStyle: GoogleFonts.aleo(
+                          floatingLabelStyle: GoogleFonts.josefinSans(
                             color: Colors.black87,
                             fontSize: 16,
                           ),
@@ -307,7 +307,7 @@ class _HomeState extends State<Home> {
             },
                         decoration: InputDecoration(
                           labelText: 'Username',
-                          floatingLabelStyle: GoogleFonts.aleo(
+                          floatingLabelStyle: GoogleFonts.josefinSans(
                             color: Colors.black87,
                             fontSize: 16,
                           ),
@@ -336,7 +336,7 @@ class _HomeState extends State<Home> {
                   ),
                   child: Text(
                     "Submit",
-                    style: GoogleFonts.aleo(
+                    style: GoogleFonts.josefinSans(
                       color: Colors.black87,
                       fontSize: 16,
                     ),
@@ -397,7 +397,7 @@ Widget easyText(String message, bool heading){
   return Text(
                     message,
                     textAlign: TextAlign.left,
-                    style: GoogleFonts.aleo(
+                    style: GoogleFonts.josefinSans(
                       color: Colors.black87,
                       fontSize: heading ? 26 : 20,
                       textStyle: TextStyle(fontWeight: heading? FontWeight.bold : FontWeight.normal)

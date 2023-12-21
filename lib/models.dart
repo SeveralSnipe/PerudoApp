@@ -263,33 +263,38 @@ class GameProvider extends ChangeNotifier {
   }
 
   void changedFace(int faceidx) {
+    var prevFace = centerFace;
     centerFace = faces[faceidx];
     if (data['first_turn']) return;
     numbers.clear();
-    if (data['current_face'] != 1) {
-      if (centerFace != 1) {
-        for (var i = data['current_number']; i < data['total_dice']; i++) {
-          numbers.add(i + 1);
+    if (prevFace == 1 || centerFace == 1){
+      if (data['current_face'] != 1) {
+        if (centerFace != 1) {
+          for (var i = data['current_number']; i < data['total_dice']; i++) {
+            numbers.add(i + 1);
+          }
+        } else {
+          for (var i = (data['current_number'] / 2).ceil() - 1;
+              i < data['total_dice'];
+              i++) {
+            numbers.add(i + 1);
+          }
         }
       } else {
-        for (var i = (data['current_number'] / 2).ceil() - 1;
-            i < data['total_dice'];
-            i++) {
-          numbers.add(i + 1);
+        if (centerFace == 1) {
+          for (var i = data['current_number']; i < data['total_dice']; i++) {
+            numbers.add(i + 1);
+          }
+        } else {
+          for (var i = (data['current_number'] * 2);
+              i < data['total_dice'];
+              i++) {
+            numbers.add(i + 1);
+          }
         }
       }
     } else {
-      if (centerFace == 1) {
-        for (var i = data['current_number']; i < data['total_dice']; i++) {
-          numbers.add(i + 1);
-        }
-      } else {
-        for (var i = (data['current_number'] * 2);
-            i < data['total_dice'];
-            i++) {
-          numbers.add(i + 1);
-        }
-      }
+      return;
     }
     changedNumber(0);
     numberController.jumpToPage(0);

@@ -1,44 +1,46 @@
 {
   "project_info": {
-    "project_number": "531167939442",
-    "project_id": "perudo-flutter",
-    "firebase_url": "https://perudo-flutter-default-rtdb.asia-southeast1.firebasedatabase.app/",
-    "storage_bucket": "perudo-flutter.appspot.com"
+    "project_number": "46262626629",
+    "firebase_url": "https://perudo-489b2-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "perudo-489b2",
+    "storage_bucket": "perudo-489b2.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:531167939442:android:7b910fa1b55d3a90a26beb",
+        "mobilesdk_app_id": "1:46262626629:android:04c2fea0657993d67a362c",
         "android_client_info": {
           "package_name": "com.example.perudo"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "531167939442-sudv2itjrd7v51gq2oo4hpnchkha2eb8.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDKjX7OaMHG7_M1VzYny9LqRHSQnjZGkEk"
+          "current_key": "AIzaSyBReK4-e0BZRNiR9obftUrwRkr0byZ10jQ"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "531167939442-sudv2itjrd7v51gq2oo4hpnchkha2eb8.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "531167939442-2ddkh7iekeoicc10hiva36148s265cc1.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.perudo"
-              }
-            }
-          ]
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:46262626629:android:45fe6995cb2fffbe7a362c",
+        "android_client_info": {
+          "package_name": "com.snipe.perudo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBReK4-e0BZRNiR9obftUrwRkr0byZ10jQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
         }
       }
     }

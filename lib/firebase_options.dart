@@ -44,40 +44,42 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyCY8RLw1EGIbJxWqUHjSaHiJaZ6NaCgVqc',
-    appId: '1:531167939442:web:6f946aa4f39f7ab5a26beb',
-    messagingSenderId: '531167939442',
-    projectId: 'perudo-flutter',
-    authDomain: 'perudo-flutter.firebaseapp.com',
-    storageBucket: 'perudo-flutter.appspot.com',
-    measurementId: 'G-JXW0YLRPBR',
+    apiKey: 'AIzaSyDVKrs6yYn0HqYf8nS5dCO7_U9_lJ3L2_Q',
+    appId: '1:46262626629:web:5a24c6420f994dc27a362c',
+    messagingSenderId: '46262626629',
+    projectId: 'perudo-489b2',
+    authDomain: 'perudo-489b2.firebaseapp.com',
+    databaseURL: 'https://perudo-489b2-default-rtdb.asia-southeast1.firebasedatabase.app',
+    storageBucket: 'perudo-489b2.appspot.com',
+    measurementId: 'G-E7N0DZMH1S',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDKjX7OaMHG7_M1VzYny9LqRHSQnjZGkEk',
-    appId: '1:531167939442:android:7b910fa1b55d3a90a26beb',
-    messagingSenderId: '531167939442',
-    projectId: 'perudo-flutter',
-    storageBucket: 'perudo-flutter.appspot.com',
+    apiKey: 'AIzaSyBReK4-e0BZRNiR9obftUrwRkr0byZ10jQ',
+    appId: '1:46262626629:android:04c2fea0657993d67a362c',
+    messagingSenderId: '46262626629',
+    projectId: 'perudo-489b2',
+    databaseURL: 'https://perudo-489b2-default-rtdb.asia-southeast1.firebasedatabase.app',
+    storageBucket: 'perudo-489b2.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyBkLyUCz4C53edvuqiROWH7u3wqIsTahwQ',
-    appId: '1:531167939442:ios:26209cd54e563c2da26beb',
-    messagingSenderId: '531167939442',
-    projectId: 'perudo-flutter',
-    storageBucket: 'perudo-flutter.appspot.com',
-    iosClientId: '531167939442-2ddkh7iekeoicc10hiva36148s265cc1.apps.googleusercontent.com',
+    apiKey: 'AIzaSyAZlf93nOfosvY3Bg3uJ1MjJbO5er1y-qA',
+    appId: '1:46262626629:ios:84bb734cc6abd5247a362c',
+    messagingSenderId: '46262626629',
+    projectId: 'perudo-489b2',
+    databaseURL: 'https://perudo-489b2-default-rtdb.asia-southeast1.firebasedatabase.app',
+    storageBucket: 'perudo-489b2.appspot.com',
     iosBundleId: 'com.example.perudo',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyBkLyUCz4C53edvuqiROWH7u3wqIsTahwQ',
-    appId: '1:531167939442:ios:26209cd54e563c2da26beb',
-    messagingSenderId: '531167939442',
-    projectId: 'perudo-flutter',
-    storageBucket: 'perudo-flutter.appspot.com',
-    iosClientId: '531167939442-2ddkh7iekeoicc10hiva36148s265cc1.apps.googleusercontent.com',
+    apiKey: 'AIzaSyAZlf93nOfosvY3Bg3uJ1MjJbO5er1y-qA',
+    appId: '1:46262626629:ios:84bb734cc6abd5247a362c',
+    messagingSenderId: '46262626629',
+    projectId: 'perudo-489b2',
+    databaseURL: 'https://perudo-489b2-default-rtdb.asia-southeast1.firebasedatabase.app',
+    storageBucket: 'perudo-489b2.appspot.com',
     iosBundleId: 'com.example.perudo',
   );
 }

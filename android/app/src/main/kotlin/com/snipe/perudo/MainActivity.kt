@@ -1,4 +1,4 @@
-package com.example.perudo
+package com.snipe.perudo
 
 import io.flutter.embedding.android.FlutterActivity
 

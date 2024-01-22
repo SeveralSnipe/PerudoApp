@@ -70,40 +70,38 @@ class _VictoryState extends State<Victory> {
             shouldLoop: true,
           ),
         ),
-        Expanded(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                widget.winnerMessage,
-                textAlign: TextAlign.center,
-                softWrap: true,
-                style: GoogleFonts.josefinSans(
-                  color: Colors.black87,
-                  fontSize: 24,
-                ),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              widget.winnerMessage,
+              textAlign: TextAlign.center,
+              softWrap: true,
+              style: GoogleFonts.josefinSans(
+                color: Colors.black87,
+                fontSize: 24,
               ),
-              const Padding(padding: EdgeInsets.all(8)),
-              ElevatedButton(
-                  onPressed: () async {
-                    AudioPlayer().play(AssetSource('audio/shooting-sound-fx-159024.mp3'), mode: PlayerMode.lowLatency);
-                    Navigator.pop(context);
-                  },
-                  style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStatePropertyAll(Colors.red.shade300),
+            ),
+            const Padding(padding: EdgeInsets.all(8)),
+            ElevatedButton(
+                onPressed: () async {
+                  AudioPlayer().play(AssetSource('audio/shooting-sound-fx-159024.mp3'), mode: PlayerMode.lowLatency);
+                  Navigator.pop(context);
+                },
+                style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStatePropertyAll(Colors.red.shade300),
+                ),
+                child: Text(
+                  "Return to home",
+                  style: GoogleFonts.josefinSans(
+                    color: Colors.black87,
+                    fontSize: 16,
                   ),
-                  child: Text(
-                    "Return to home",
-                    style: GoogleFonts.josefinSans(
-                      color: Colors.black87,
-                      fontSize: 16,
-                    ),
-                  ),
-                )
-            ],
-          ),
+                ),
+              )
+          ],
         ),
       ]),
     ));
